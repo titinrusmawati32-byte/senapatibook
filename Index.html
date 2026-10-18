@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Perpustakaan Digital</title>
+<meta name="theme-color" content="#4F63E6">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Perpustakaan Digital","short_name":"Perpus","start_url":".","display":"standalone","background_color":"%23ffffff","theme_color":"%234F63E6"}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#4F63E6;--primary-d:#3F51CC;--navy:#1E2B5E;--orange:#F97316;--text:#111827;--muted:#9CA3AF;--border:#EEF0F4;--ok:#16A34A;--bad:#E11D48;--warn:#D97706}
+:where(#perpus-root),:where(#perpus-root) *{box-sizing:border-box;margin:0;padding:0}
+html.perpus-lock,html.perpus-lock body{overflow:hidden!important}
+#perpus-root{position:fixed;inset:0;z-index:2147483647;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);background:linear-gradient(160deg,#9FD3F0 0%,#CFEAF7 55%,#BFE3DA 100%);overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+:where(#perpus-root) button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:where(#perpus-root) input,:where(#perpus-root) select,:where(#perpus-root) textarea{font:inherit;color:inherit}
+:where(#perpus-root) svg{flex:none}
+[hidden]{display:none!important}
+
+/* ===== LOGIN ===== */
+.login-wrap{position:absolute;inset:0;display:grid;place-items:center;padding:20px;overflow:auto}
+.login-card{display:flex;width:min(900px,100%);min-height:520px;border-radius:32px;overflow:hidden;background:rgba(255,255,255,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 30px 80px rgba(30,43,94,.18)}
+.login-art{flex:1;position:relative;color:#fff;padding:40px 36px;background:linear-gradient(180deg,#3E9BE6 0%,#7CC4F0 60%,#BFE6F5 100%);overflow:hidden;min-height:200px}
+.login-art h1{font-size:36px;line-height:1.1;font-weight:600;position:relative}
+.login-art p{position:relative;margin-top:10px;opacity:.95;max-width:260px}
+.login-art .illu{position:absolute;left:0;right:0;bottom:0;height:62%}
+.login-art .illu svg{width:100%;height:100%}
+.login-form{flex:1;padding:40px 36px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.login-form h2{font-size:26px;font-weight:600}
+.login-form .sub{color:var(--muted);margin-top:-8px}
+.seg{display:flex;background:#EEF1FF;border-radius:999px;padding:4px}
+.seg button{flex:1;padding:9px 12px;border-radius:999px;color:#6B7280;font-weight:500;transition:.2s}
+.seg button.on{background:#fff;color:var(--primary);box-shadow:0 4px 14px rgba(79,99,230,.18)}
+.hint{background:#F5F7FF;border:1px dashed #C7D0FF;border-radius:14px;padding:10px 14px;font-size:12px;color:#4B5563}
+.hint b{color:var(--primary)}
+.err-box{background:#FFF1F2;color:var(--bad);border-radius:12px;padding:10px 14px;font-size:13px}
+
+/* ===== FORM ===== */
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld>span{font-size:12px;font-weight:500;color:#4B5563}
+.fld small{font-size:11px;color:var(--muted)}
+.fld input,.fld select,.fld textarea{width:100%;padding:11px 14px;border:1px solid #E5E7EB;border-radius:14px;background:#fff;outline:none;transition:.2s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(79,99,230,.12)}
+.fld textarea{resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full,.form-grid .m-title,.form-grid .m-act{grid-column:1/-1}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:999px;background:var(--primary);color:#fff!important;font-weight:500;transition:.2s;box-shadow:0 8px 20px rgba(79,99,230,.28);text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--primary-d);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn.ghost{background:#fff;color:var(--primary)!important;box-shadow:inset 0 0 0 1px #DDE2FF;border:0}
+.btn.ghost:hover{background:#F5F7FF}
+.btn.danger{background:var(--bad);box-shadow:0 8px 20px rgba(225,29,72,.25)}
+.btn.sm{padding:7px 14px;font-size:12px}
+.btn.block{width:100%}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;background:#fff;color:var(--primary);font-weight:500;box-shadow:0 8px 24px rgba(30,43,94,.1);transition:.2s;white-space:nowrap}
+.pill:hover{transform:translateY(-2px)}
+.ib{width:34px;height:34px;border-radius:12px;display:inline-grid;place-items:center;color:#6B7280;background:#F3F4F6;transition:.2s}
+.ib:hover{background:#EEF1FF;color:var(--primary)}
+.ib.red:hover{background:#FFE4E8;color:var(--bad)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ===== SHELL ===== */
+.shell{position:absolute;inset:24px;display:flex;border-radius:32px;overflow:hidden;background:rgba(255,255,255,.84);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 30px 80px rgba(30,43,94,.18)}
+.sidebar{width:88px;flex:none;margin:14px 0 14px 14px;border-radius:26px;background:#fff;display:flex;flex-direction:column;align-items:center;padding:18px 0;box-shadow:0 8px 30px rgba(30,43,94,.08)}
+.logo{text-align:center;line-height:1.1;margin-bottom:22px}
+.logo b{display:block;font-size:16px;font-weight:700;color:var(--navy)}
+.logo small{font-size:9px;color:var(--muted)}
+.navs{display:flex;flex-direction:column;gap:6px;width:100%;flex:1;overflow-y:auto;scrollbar-width:none}
+.nv{position:relative;width:100%;height:48px;display:grid;place-items:center;color:var(--muted)}
+.nv span{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;transition:.2s}
+.nv:hover span{background:#F3F4F6;color:var(--navy)}
+.nv.on{color:var(--primary)}
+.nv.on span{background:#EEF1FF}
+.nv.on:after{content:'';position:absolute;right:0;top:11px;bottom:11px;width:3px;border-radius:3px 0 0 3px;background:var(--primary)}
+.nv .tip{position:absolute;left:78px;background:var(--navy);color:#fff;font-size:12px;padding:5px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:.15s;z-index:5}
+.nv:hover .tip{opacity:1}
+.main{flex:1;min-width:0;overflow-y:auto;padding:22px 32px 40px;scroll-behavior:smooth}
+.top{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:26px}
+.search{flex:1;display:flex;align-items:center;gap:10px;color:var(--navy)}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:8px 0}
+.search input::placeholder{color:#6B7280}
+.bell{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#6B7280}
+.bell:hover{background:#F3F4F6}
+.bell i{position:absolute;top:6px;right:8px;min-width:9px;height:9px;border-radius:9px;background:var(--bad);border:2px solid #fff}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:13px;background:linear-gradient(135deg,#F59E0B,#EF4444)}
+.avatar.sm{width:30px;height:30px;font-size:11px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.ph h1{font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1.15}
+.h2{font-size:30px;font-weight:600;letter-spacing:-.02em;margin:30px 0 14px;color:var(--text)}
+.h2 span{color:var(--muted);font-weight:500}
+.h3{font-size:18px;font-weight:600;margin:26px 0 12px}
+.panel{width:300px;flex:none;position:relative;color:#fff;background:linear-gradient(180deg,#3E9BE6 0%,#7CC4F0 55%,#BFE6F5 100%);overflow:hidden;padding:36px 28px;margin:0}
+.panel .illu{position:absolute;left:0;right:0;bottom:0;height:68%;pointer-events:none}
+.panel .illu svg{width:100%;height:100%}
+.panel>*:not(.illu){position:relative}
+.p-tag{display:block;opacity:.85;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.panel h2{font-size:27px;line-height:1.15;font-weight:600;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.panel .big{font-size:36px;font-weight:600;margin-top:16px;line-height:1}
+.panel .big span{font-size:12px;font-weight:400;opacity:.9;margin-left:6px}
+.p-line{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:10px;opacity:.95}
+.panel .btn{position:absolute;bottom:28px;left:50%;transform:translateX(-50%)}
+.panel .btn:hover{transform:translateX(-50%) translateY(-1px)}
+
+/* ===== STAT CARDS ===== */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stat{position:relative;height:172px;border-radius:22px;padding:18px 20px;color:#fff;overflow:hidden;transition:.25s;box-shadow:0 12px 30px rgba(30,43,94,.12)}
+.stat:hover{transform:translateY(-4px)}
+.stat .ill{position:absolute;inset:0}
+.stat .ill svg{width:100%;height:100%}
+.stat:after{content:'';position:absolute;inset:auto 0 0 0;height:96px;background:linear-gradient(transparent,rgba(0,0,0,.3))}
+.stat h3{position:relative;z-index:2;font-size:19px;font-weight:600;line-height:1.2;max-width:140px}
+.stat .pc{position:absolute;z-index:2;left:20px;bottom:36px;font-size:28px;font-weight:600;line-height:1}
+.stat .sub{position:absolute;z-index:2;left:20px;bottom:14px;font-size:11px;opacity:.95}
+.stat .bar{position:absolute;z-index:2;left:20px;right:20px;bottom:8px;height:3px;border-radius:3px;background:rgba(255,255,255,.3);overflow:hidden}
+.stat .bar i{display:block;height:100%;background:#fff;border-radius:3px;transition:width .8s}
+.c-green{background:linear-gradient(180deg,#4DA8E8,#8FD3F0)}
+.c-purple{background:linear-gradient(180deg,#A78BFA,#8B5CF6)}
+.c-coral{background:linear-gradient(180deg,#F0647E,#F59E6B)}
+.c-blue{background:linear-gradient(180deg,#38BDF8,#4F63E6)}
+
+/* ===== TIMELINE ===== */
+.tl-scroll{overflow-x:auto;padding-bottom:10px}
+.tl{position:relative;min-width:100%}
+.tl-h{position:relative;height:30px}
+.tl-h span{position:absolute;top:0;width:52px;text-align:center;font-size:11px;color:#6B7280;padding:4px 0;border-radius:999px}
+.tl-h span.on{background:var(--navy);color:#fff;font-weight:500}
+.tl-b{position:relative;margin-top:12px;background-image:repeating-linear-gradient(90deg,transparent 0,transparent 71px,#F1F3F8 71px,#F1F3F8 72px);background-position:26px 0}
+.tl-now{position:absolute;top:-8px;bottom:0;width:1px;background:#9F7AEA;z-index:3}
+.tl-now:before{content:'';position:absolute;top:0;left:-5px;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--primary);box-sizing:border-box}
+.tl-it{position:absolute;width:250px;height:52px;border-radius:999px;background:#fff;box-shadow:0 8px 24px rgba(30,43,94,.1);display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 10px 0 20px;z-index:2}
+.tl-it small{display:block;font-size:10px;color:#6B7280;line-height:1.2}
+.tl-it b{display:block;font-size:12px;font-weight:600;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-it.hot{background:var(--primary);color:#fff}
+.tl-it.hot small{color:#DDE2FF}
+
+/* ===== BOOKS ===== */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;margin-bottom:6px}
+.chip{padding:8px 16px;border-radius:999px;background:#fff;color:#4B5563;white-space:nowrap;box-shadow:0 2px 10px rgba(30,43,94,.06);transition:.2s;font-size:13px}
+.chip.on{background:var(--primary);color:#fff;box-shadow:0 8px 18px rgba(79,99,230,.28)}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:20px}
+.bcard{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 26px rgba(30,43,94,.08);cursor:pointer;transition:.25s;display:flex;flex-direction:column}
+.bcard:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(30,43,94,.14)}
+.bc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:2px;flex:1}
+.bc-cat{font-size:10px;color:var(--primary);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.bc-title{font-weight:600;font-size:13.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bc-author{font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.cover{position:relative;aspect-ratio:3/4;display:grid;place-items:center;color:#fff;overflow:hidden}
+.cover .cv-in{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px;text-align:center;font-size:12px;font-weight:600;line-height:1.25;opacity:.95}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover.mini{width:40px;aspect-ratio:3/4;border-radius:8px;flex:none}
+.cover.mini .cv-in{display:none}
+.cover.lg{width:100%;border-radius:20px}
+.hscroll{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;scroll-snap-type:x proximity}
+.hscroll .bcard{width:168px;flex:none;scroll-snap-align:start}
+.heart{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#F3F4F6;color:#9CA3AF;transition:.2s}
+.heart.on{background:#FFE4E8;color:var(--bad)}
+.heart.on svg{fill:currentColor}
+
+/* ===== BADGES / LISTS ===== */
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.bd.ok{background:#DCFCE7;color:#15803D}
+.bd.bad{background:#FFE4E8;color:#BE123C}
+.bd.info{background:#E0E7FF;color:#4338CA}
+.bd.warn{background:#FEF3C7;color:#B45309}
+.bd.gray{background:#F3F4F6;color:#4B5563}
+.plist{display:flex;flex-direction:column;gap:12px}
+.prow{display:flex;align-items:center;gap:14px;background:#fff;border-radius:999px;padding:10px 18px 10px 10px;box-shadow:0 8px 24px rgba(30,43,94,.08)}
+.prow.block{border-radius:20px;align-items:flex-start;padding:14px}
+.prow .pl-l{flex:1;min-width:0}
+.prow small{display:block;font-size:11px;color:#6B7280}
+.prow b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow.block b{white-space:normal}
+.tabs{display:flex;gap:6px;background:#EEF1FF;border-radius:999px;padding:4px;width:max-content;max-width:100%;overflow-x:auto;margin-bottom:18px}
+.tabs button{padding:8px 16px;border-radius:999px;color:#6B7280;white-space:nowrap;font-size:13px}
+.tabs button.on{background:#fff;color:var(--primary);box-shadow:0 4px 12px rgba(79,99,230,.15);font-weight:500}
+.tw{background:#fff;border-radius:22px;box-shadow:0 8px 28px rgba(30,43,94,.07);overflow-x:auto}
+.tw table{width:100%;border-collapse:collapse;min-width:640px}
+.tw th{text-align:left;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:14px 16px;border-bottom:1px solid var(--border)}
+.tw td{padding:12px 16px;border-bottom:1px solid #F6F7FA;vertical-align:middle;font-size:13px}
+.tw tr:last-child td{border-bottom:0}
+.tw tbody tr:hover{background:#FAFBFF}
+.cellbook,.cellusr{display:flex;align-items:center;gap:12px;min-width:0}
+.cellbook b,.cellusr b{display:block;font-weight:600;line-height:1.3}
+.cellbook small,.cellusr small{color:#6B7280;font-size:11px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.kcard{display:flex;align-items:center;gap:14px;background:#fff;padding:16px;border-radius:20px;box-shadow:0 8px 24px rgba(30,43,94,.07)}
+.kcard>i{width:14px;height:44px;border-radius:8px;flex:none}
+.kcard>div:nth-child(2){flex:1;min-width:0}
+.kcard b{display:block}
+.kcard small{color:#6B7280}
+.empty{display:grid;place-items:center;text-align:center;gap:8px;padding:44px 16px;color:var(--muted);background:rgba(255,255,255,.6);border-radius:22px}
+.empty.small{padding:18px}
+.card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 8px 28px rgba(30,43,94,.07)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:13px}
+.kv dt{color:#6B7280}
+.kv dd{font-weight:500;word-break:break-word}
+.rank{display:flex;flex-direction:column;gap:10px}
+.rank div{display:flex;align-items:center;gap:10px;font-size:13px}
+.rank em{font-style:normal;width:24px;height:24px;border-radius:50%;background:#EEF1FF;color:var(--primary);display:grid;place-items:center;font-size:11px;font-weight:600;flex:none}
+.rank span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars{display:flex;align-items:flex-end;gap:5px;height:140px;overflow-x:auto;padding-top:10px}
+.bars div{flex:1;min-width:14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;font-size:9px;color:#6B7280}
+.bars i{display:block;width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#7C8CF0,var(--primary));min-height:3px}
+
+/* ===== FAB / BOTTOM NAV ===== */
+.fab{position:absolute;right:calc(300px + 42px);bottom:44px;width:54px;height:54px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;box-shadow:0 12px 28px rgba(249,115,22,.45);z-index:20;transition:.2s}
+.fab:hover{transform:scale(1.08) rotate(90deg)}
+.bnav{display:none}
+
+/* ===== MODAL / TOAST ===== */
+.ov{position:absolute;inset:0;z-index:100;background:rgba(17,24,39,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:18px;animation:fade .2s}
+.modal{background:#fff;border-radius:28px;padding:26px;width:min(560px,100%);max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.25);animation:pop .25s}
+.modal.wide{width:min(760px,100%)}
+.m-title{font-size:21px;font-weight:600;margin-bottom:4px}
+.m-p{color:#4B5563;margin:8px 0 18px}
+.m-act{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+.bd-wrap{display:grid;grid-template-columns:180px 1fr;gap:22px}
+.bd-info h3{font-size:22px;line-height:1.25;font-weight:600}
+.bd-info .au{color:#6B7280;margin:2px 0 12px}
+.bd-info p{color:#4B5563;font-size:13px;margin:12px 0}
+.toast{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:200;background:var(--navy);color:#fff;padding:12px 22px;border-radius:999px;box-shadow:0 14px 34px rgba(0,0,0,.25);animation:pop .25s;max-width:92vw;text-align:center}
+.toast.err{background:var(--bad)}
+.busy{position:absolute;top:0;left:0;right:0;height:3px;z-index:300;background:linear-gradient(90deg,transparent,var(--primary),transparent);background-size:200% 100%;animation:slide 1s linear infinite}
+.sk{border-radius:20px;background:linear-gradient(90deg,#F1F3F8 25%,#E7EAF3 50%,#F1F3F8 75%);background-size:200% 100%;animation:slide 1.2s linear infinite}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes slide{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* ===== SCAN / KARTU / BRANDING ===== */
+#ov2{z-index:150}
+.modal.scan{width:min(460px,100%)}
+.scan-view{position:relative;border-radius:20px;overflow:hidden;background:#0F172A;aspect-ratio:4/3;display:grid;place-items:center}
+.scan-view video{width:100%;height:100%;object-fit:cover}
+#scR{width:100%}
+.scan-frame{position:absolute;inset:18% 10%;border:2px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.28);pointer-events:none}
+.scan-frame:after{content:'';position:absolute;left:5%;right:5%;top:50%;height:2px;background:var(--orange);animation:scanline 1.6s ease-in-out infinite alternate}
+@keyframes scanline{from{transform:translateY(-34px)}to{transform:translateY(34px)}}
+.scan-manual{display:flex;gap:8px;margin-top:12px}
+.scan-manual input{flex:1;min-width:0;padding:10px 16px;border:1px solid #E5E7EB;border-radius:999px;outline:none}
+.scan-manual input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(79,99,230,.12)}
+.scanrow{display:flex;gap:8px;align-items:center}
+.scanrow input{flex:1;min-width:0}
+.scanrow .ib{width:42px;height:42px;border-radius:14px;flex:none;background:#EEF1FF;color:var(--primary)}
+.scanok{font-size:11px;min-height:14px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#F3F4F6;padding:2px 8px;border-radius:8px;font-size:12px;white-space:nowrap}
+.bcode svg{width:100%;height:46px;display:block;margin-top:10px;border-radius:6px}
+.bcode small{display:block;text-align:center;font-size:11px;letter-spacing:.12em;color:#4B5563;margin-top:2px}
+.logo img{width:42px;height:42px;object-fit:contain;border-radius:12px;display:block;margin:0 auto 6px;background:#fff}
+.logo .lg-badge{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;margin:0 auto 6px;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,#6D83F2,#4F63E6)}
+.logo small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:72px;margin:0 auto;word-break:break-word}
+.lg-logo{position:relative;width:64px;height:64px;object-fit:contain;background:#fff;border-radius:18px;padding:6px;margin-bottom:12px;box-shadow:0 8px 24px rgba(30,43,94,.18)}
+.lg-school{position:relative;margin-top:6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.92}
+.logo-up{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo-prev{width:72px;height:72px;border-radius:18px;background:#F3F4F6;display:grid;place-items:center;overflow:hidden;color:var(--muted);flex:none}
+.logo-prev img{width:100%;height:100%;object-fit:contain}
+.card-wrap{display:flex;justify-content:center;overflow-x:auto;padding:8px 2px 14px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1180px){.panel{display:none}.fab{right:42px}}
+@media(max-width:900px){
+ .shell{inset:0;border-radius:0}
+ .sidebar{display:none}
+ .main{padding:16px 16px 120px}
+ .ph h1{font-size:26px}.h2{font-size:23px}
+ .stats{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:78%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px}
+ .stat{scroll-snap-align:start}
+ .grid2{grid-template-columns:1fr}
+ .form-grid{grid-template-columns:1fr}
+ .bd-wrap{grid-template-columns:1fr}
+ .bd-wrap .cover.lg{max-width:180px;margin:auto}
+ .fab{right:18px;bottom:98px}
+ .toast{bottom:104px}
+ .bnav{display:flex;position:absolute;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:26px;padding:8px;box-shadow:0 14px 40px rgba(30,43,94,.22);border:1px solid rgba(255,255,255,.7)}
+ .bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0;border-radius:18px;color:var(--muted);font-size:10px;font-weight:500}
+ .bnav button.on{color:var(--primary);background:#EEF1FF}
+ .login-card{flex-direction:column;min-height:0}
+ .login-art{min-height:170px;padding:26px}
+ .login-art h1{font-size:28px}
+ .login-form{padding:26px 22px}
+ .tw table,.tw thead{display:block;min-width:0}
+ .tw thead{display:none}
+ .tw tbody,.tw tr,.tw td{display:block}
+ .tw tr{padding:12px 4px;border-bottom:8px solid #F6F7FA}
+ .tw tr:last-child{border-bottom:0}
+ .tw td{border:0;padding:6px 14px;display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:right}
+ .tw td:before{content:attr(data-l);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:left;flex:none}
+ .tw td:first-child{justify-content:flex-start;text-align:left}
+ .tw td:first-child:before{display:none}
+ .tw td .acts{justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<div id="perpus-root">
+  <div id="busy" class="busy" hidden></div>
+
+  <!-- LOGIN -->
+  <section id="view-login" class="login-wrap" hidden>
+    <div class="login-card">
+      <div class="login-art">
+        <img id="lg-logo" class="lg-logo" alt="" hidden><h1 id="lg-name">Perpustakaan Digital</h1><div id="lg-school" class="lg-school"></div>
+        <p>Pinjam buku fisik, baca e-book, dan pantau pinjamanmu dalam satu tempat.</p>
+        <div class="illu" id="lg-illu"></div>
+      </div>
+      <form class="login-form" id="frmLogin" autocomplete="on">
+        <div>
+          <h2>Selamat datang</h2>
+          <p class="sub">Masuk untuk melanjutkan</p>
+        </div>
+        <div class="seg" id="lg-seg">
+          <button type="button" data-act="loginTab" data-r="anggota" class="on">Anggota</button>
+          <button type="button" data-act="loginTab" data-r="admin">Admin</button>
+        </div>
+        <label class="fld"><span id="lg-l1">Username / ID Anggota</span><input id="lg-u" name="u" required autocomplete="username"></label>
+        <label class="fld"><span>Password</span><input id="lg-p" name="p" type="password" required autocomplete="current-password"></label>
+        <div id="lg-err" class="err-box" hidden></div>
+        <button class="btn block" id="lg-btn" type="submit">Masuk</button>
+        <div id="lg-hint" class="hint" hidden></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section id="view-app" hidden>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="logo" id="logo"></div>
+        <nav class="navs" id="side-nav"></nav>
+        <button class="nv" data-act="logout" aria-label="Keluar"><span id="ic-logout"></span><em class="tip">Keluar</em></button>
+      </aside>
+      <main class="main" id="main">
+        <header class="top">
+          <label class="search"><span id="ic-search"></span><input id="q" type="search" placeholder="Cari buku, anggota, pinjaman..." aria-label="Pencarian"></label>
+          <button class="bell" data-act="bell" aria-label="Notifikasi"><span id="ic-bell"></span><i id="bell-dot" hidden></i></button>
+          <button class="avatar" id="top-av" data-act="userMenu" aria-label="Akun">A</button>
+        </header>
+        <div id="page"></div>
+      </main>
+      <aside class="panel" id="panel"></aside>
+    </div>
+    <button class="fab" id="fab" data-act="fab" aria-label="Aksi cepat" hidden></button>
+    <nav class="bnav" id="bnav"></nav>
+  </section>
+
+  <div id="ov" class="ov" hidden></div>
+  <div id="ov2" class="ov" hidden></div>
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script type="module">
+/* =====================================================================
+   KONFIGURASI APLIKASI
+   ===================================================================== */
+const IS_PREVIEW = false; // Set false JIKA SUDAH TERHUBUNG KE SUPABASE
+// PASTE SUPABASE URL & ANON KEY ANDA DI SINI
+const SUPABASE_URL = "https://qmqxotsfbgbwzpnpzmmw.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable__-k0r4-V5mtS64JBvEIBVg_cZ3JfWp6";
+const CDN_SUPABASE = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const DEFAULT_SET={nama_aplikasi:'Perpustakaan Digital',nama_sekolah:'',logo_url:'',alamat:'',kepala_sekolah:'',nip_kepala_sekolah:'',kepala_perpus:'',nip_kepala_perpus:'',lama_pinjam_hari:7,denda_per_hari:1000,maks_pinjam:3,maks_perpanjang:1};
+
+/* =====================================================================
+   UTIL
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():'id-'+Math.random().toString(36).slice(2)+Date.now().toString(36));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return ymd(d);};
+const diffDays=(a,b)=>Math.round((new Date(a+'T00:00:00')-new Date(b+'T00:00:00'))/864e5);
+const BULAN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const fmtD=s=>{if(!s)return '-';const d=new Date(String(s).length>10?s:s+'T00:00:00');return `${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;};
+const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const sum=(a,f)=>a.reduce((t,x)=>t+(Number(f(x))||0),0);
+const safeUrl=u=>/^https?:\/\//i.test(String(u||'').trim())?String(u).trim():'';
+const initials=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const hashNum=s=>[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0);
+async function hashPw(username,pw){
+  const d=new TextEncoder().encode('perpus-v1:'+String(username).trim().toLowerCase()+':'+pw);
+  const b=await crypto.subtle.digest('SHA-256',d);
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+const BULAN_FULL=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const fmtLong=s=>{if(!s)return '-';const d=new Date(String(s).length>10?s:s+'T00:00:00');return `${d.getDate()} ${BULAN_FULL[d.getMonth()]} ${d.getFullYear()}`;};
+const fmtTime=s=>{if(!s)return '-';const d=new Date(s);return `${pad(d.getHours())}.${pad(d.getMinutes())}`;};
+const safeImg=u=>/^(https?:\/\/|data:image\/(png|jpe?g|webp|gif);base64,)/i.test(String(u||'').trim())?String(u).trim():'';
+const CDN_H5QR='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
+
+/* ===== BARCODE CODE128 (dibuat sendiri, tanpa library) ===== */
+const C128=['212222','222122','222221','121223','121322','131222','122213','122312','132212','221213','221312','231212','112232','122132','122231','113222','123122','123221','223211','221132','221231','213212','223112','312131','311222','321122','321221','312212','322112','322211','212123','212321','232121','111323','131123','131321','112313','132113','132311','211313','231113','231311','112133','112331','132131','113123','113321','133121','313121','211331','231131','213113','213311','213131','311123','311321','331121','312113','312311','332111','314111','221411','431111','111224','111422','121124','121421','141122','141221','112214','112412','122114','122411','142112','142211','241211','221114','413111','241112','134111','111242','121142','121241','114212','124112','124211','411212','421112','421211','212141','214121','412121','111143','111341','131141','114113','114311','411113','411311','113141','114131','311141','411131','211412','211214','211232','2331112'];
+function barcodeSvg(text,h=40){
+ const s=String(text==null?'':text).replace(/[^\x20-\x7e]/g,'?');
+ if(!s)return '';
+ const codes=[104];for(const ch of s)codes.push(ch.charCodeAt(0)-32);
+ let chk=104;for(let i=1;i<codes.length;i++)chk+=codes[i]*i;
+ codes.push(chk%103,106);
+ let x=10,d='';
+ for(const c of codes){const p=C128[c];for(let i=0;i<p.length;i++){const w=+p[i];if(i%2===0)d+=`M${x} 0h${w}v${h}h-${w}z`;x+=w;}}
+ const W=x+10;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${h}" preserveAspectRatio="none" shape-rendering="crispEdges" role="img" aria-label="Barcode ${esc(s)}"><rect width="${W}" height="${h}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+
+/* ===== KARTU ANGGOTA & CETAK ===== */
+const CARD_CSS=`.idc{width:85.6mm;height:54mm;border-radius:4mm;overflow:hidden;position:relative;background:#fff;color:#111827;font-family:'Poppins',Arial,Helvetica,sans-serif;box-shadow:0 10px 30px rgba(30,43,94,.18);display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;border:.2mm solid #E5E7EB;flex:none}
+.idc-h{display:flex;align-items:center;gap:2.4mm;padding:2.2mm 3.2mm;background:linear-gradient(120deg,#4F63E6,#7C8CF0);color:#fff;min-height:12mm}
+.idc-h img{width:8mm;height:8mm;object-fit:contain;background:#fff;border-radius:50%;padding:.6mm;flex:none}
+.idc-h b{display:block;font-size:2.8mm;line-height:1.15;font-weight:700;text-transform:uppercase}
+.idc-h small{display:block;font-size:1.9mm;opacity:.92;letter-spacing:.05em;margin-top:.4mm}
+.idc-b{flex:1;display:flex;gap:3mm;padding:2.4mm 3.2mm 0;align-items:center;min-height:0}
+.idc-av{width:15mm;height:15mm;border-radius:3mm;flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:5mm;background:linear-gradient(135deg,#F59E0B,#EF4444)}
+.idc-i{min-width:0}
+.idc-i b{display:block;font-size:3.3mm;line-height:1.2;font-weight:700}
+.idc-i span{display:block;font-size:2.4mm;color:#4B5563;line-height:1.4}
+.idc-bc{padding:0 3.2mm 1.8mm}
+.idc-bc svg{width:100%;height:9mm;display:block}
+.idc-bc small{display:block;text-align:center;font-size:2.1mm;letter-spacing:.18em;color:#374151;margin-top:.3mm}`;
+const PRINT_CSS=`*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#111;font-size:11pt;background:#E5E7EB}
+.bar{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:#1E2B5E;color:#fff;font-size:13px;z-index:5}
+.bar button{margin-left:8px;padding:8px 20px;border:0;border-radius:999px;background:#F97316;color:#fff;font-weight:600;cursor:pointer;font-size:13px}.bar button.g{background:#fff;color:#1E2B5E}
+.sheet{background:#fff;width:210mm;max-width:100%;margin:16px auto;padding:14mm;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.sheet.land{width:297mm}
+.kop{display:grid;grid-template-columns:24mm 1fr 24mm;align-items:center;border-bottom:3px double #111;padding-bottom:3mm;margin-bottom:5mm}
+.kop img{width:22mm;height:22mm;object-fit:contain}
+.kt{text-align:center}.kt h2{margin:0;font-size:15pt;text-transform:uppercase}.kt h3{margin:1mm 0;font-size:12pt;font-weight:600}.kt p{margin:0;font-size:9.5pt;color:#333}
+h1.jd{text-align:center;font-size:13pt;margin:0 0 1mm;text-transform:uppercase;letter-spacing:.04em}.sub{text-align:center;margin:0 0 5mm;font-size:10pt;color:#333}
+h4{margin:6mm 0 2mm;font-size:11pt}
+table{width:100%;border-collapse:collapse;font-size:9.5pt}th,td{border:1px solid #333;padding:1.5mm 2mm;text-align:left;vertical-align:top}th{background:#EEF1FF;-webkit-print-color-adjust:exact;print-color-adjust:exact}td.c,th.c{text-align:center}td.r{text-align:right}td small{color:#555}
+tr{page-break-inside:avoid}thead{display:table-header-group}
+.sum td:first-child{width:62%}
+.ttd{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin-top:12mm;text-align:center;page-break-inside:avoid}.ttd p{margin:0}.ttd .sp{height:20mm}
+.cards{display:grid;grid-template-columns:repeat(2,85.6mm);gap:6mm;justify-content:center}
+.cards .idc{box-shadow:none;border:.2mm dashed #888}
+.labels{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}.lb{border:1px dashed #888;padding:3mm;text-align:center;page-break-inside:avoid}.lb svg{width:100%;height:12mm;display:block}.lb b{display:block;font-size:9pt;margin-top:1mm;letter-spacing:.08em}.lb span{display:block;font-size:8pt;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media print{body{background:#fff}.no-print{display:none!important}.sheet{box-shadow:none;margin:0;padding:0;width:auto!important}}`;
+function injectCss(){const s=document.createElement('style');s.id='perpus-card-css';s.textContent=CARD_CSS;document.head.appendChild(s);}
+function cardHtml(a){
+ const P=S.settings,logo=safeImg(P.logo_url);
+ return `<div class="idc"><div class="idc-h">${logo?`<img src="${esc(logo)}" alt="">`:''}<div><b>${esc(P.nama_sekolah||P.nama_aplikasi)}</b><small>KARTU ANGGOTA PERPUSTAKAAN</small></div></div><div class="idc-b"><div class="idc-av">${esc(initials(a.nama))}</div><div class="idc-i"><b>${esc(a.nama)}</b><span>No. Anggota: ${esc(a.no_anggota)}</span>${a.kelas?`<span>Kelas/Jabatan: ${esc(a.kelas)}</span>`:''}<span>Status: ${a.status==='nonaktif'?'Nonaktif':'Aktif'}</span></div></div><div class="idc-bc">${barcodeSvg(a.no_anggota)}<small>${esc(a.no_anggota)}</small></div></div>`;
+}
+function kopHtml(){
+ const P=S.settings,logo=safeImg(P.logo_url);
+ return `<div class="kop">${logo?`<img src="${esc(logo)}" alt="">`:'<i></i>'}<div class="kt"><h2>${esc(P.nama_sekolah||P.nama_aplikasi)}</h2><h3>${esc(P.nama_aplikasi)}</h3>${P.alamat?`<p>${esc(P.alamat)}</p>`:''}</div><i></i></div>`;
+}
+function ttdHtml(){
+ const P=S.settings,dots=n=>'.'.repeat(n);
+ return `<div class="ttd"><div><p>Mengetahui,<br>Kepala Sekolah</p><div class="sp"></div><b><u>${P.kepala_sekolah?esc(P.kepala_sekolah):dots(32)}</u></b><p>NIP. ${P.nip_kepala_sekolah?esc(P.nip_kepala_sekolah):dots(24)}</p></div><div><p>${fmtLong(todayStr())}<br>Kepala Perpustakaan</p><div class="sp"></div><b><u>${P.kepala_perpus?esc(P.kepala_perpus):dots(32)}</u></b><p>NIP. ${P.nip_kepala_perpus?esc(P.nip_kepala_perpus):dots(24)}</p></div></div>`;
+}
+function openPrint(title,body,{landscape=false}={}){
+ const html=`<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>${PRINT_CSS}${CARD_CSS}@page{size:A4${landscape?' landscape':''};margin:14mm}</style></head><body><div class="bar no-print"><span>Pratinjau cetak &middot; ${esc(title)}</span><span><button onclick="window.print()">Cetak</button><button class="g" onclick="window.close()">Tutup</button></span></div><div class="sheet${landscape?' land':''}">${body}</div></body></html>`;
+ const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+ const w=window.open(url,'_blank');
+ if(!w){URL.revokeObjectURL(url);toast('Popup diblokir browser. Izinkan popup untuk situs ini lalu coba lagi.','err');return;}
+ setTimeout(()=>URL.revokeObjectURL(url),180000);
+}
+
+/* ===== ICONS (Lucide-style) ===== */
+const ICO={
+ dash:'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+ book:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+ tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ repeat:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+ bookmark:'<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+ chart:'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+ sliders:'<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
+ logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+ search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+ heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+ user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+ home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+ more:'<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+ edit:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+ trash:'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+ x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+ key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>',
+ ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+ clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/>'
+};
+Object.assign(ICO,{
+ card:'<rect width="18" height="14" x="3" y="5" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M15 9h3"/><path d="M15 13h3"/><path d="M6 17c.6-1.6 1.6-2 3-2s2.4.4 3 2"/>',
+ camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+ printer:'<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',
+ door:'<path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/>',
+ upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
+ scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>'
+});
+const ic=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]||''}</svg>`;
+
+/* ===== ILUSTRASI (SVG orisinal) ===== */
+const ILLU={
+ green:`<svg viewBox="0 0 300 172" preserveAspectRatio="xMaxYMax slice"><circle cx="236" cy="38" r="15" fill="#FDE68A"/><g fill="#fff" opacity=".8"><ellipse cx="172" cy="26" rx="30" ry="9"/><ellipse cx="194" cy="20" rx="18" ry="8"/></g><path d="M0 118 Q80 66 160 112 T300 98 V172 H0Z" fill="#6DBE5A"/><path d="M0 142 Q100 106 200 138 T300 128 V172 H0Z" fill="#4C9F3E"/><rect x="176" y="96" width="82" height="13" rx="3" fill="#3B82F6"/><rect x="184" y="83" width="64" height="13" rx="3" fill="#F59E0B"/><rect x="190" y="70" width="52" height="13" rx="3" fill="#EF4444"/></svg>`,
+ purple:`<svg viewBox="0 0 300 172" preserveAspectRatio="xMaxYMax slice"><rect x="150" y="30" width="130" height="150" rx="6" fill="#7C4DD6" opacity=".55"/><g><rect x="160" y="40" width="10" height="40" rx="2" fill="#FDE68A"/><rect x="172" y="48" width="10" height="32" rx="2" fill="#F472B6"/><rect x="184" y="38" width="12" height="42" rx="2" fill="#38BDF8"/><rect x="198" y="50" width="10" height="30" rx="2" fill="#34D399"/><rect x="214" y="42" width="12" height="38" rx="2" fill="#FB923C"/><rect x="230" y="46" width="10" height="34" rx="2" fill="#fff"/><rect x="244" y="40" width="12" height="40" rx="2" fill="#FDE68A"/></g><rect x="150" y="80" width="130" height="5" fill="#5B2FB5"/><g><rect x="162" y="96" width="14" height="38" rx="2" fill="#38BDF8"/><rect x="178" y="104" width="10" height="30" rx="2" fill="#F472B6"/><rect x="190" y="94" width="12" height="40" rx="2" fill="#FDE68A"/><rect x="206" y="100" width="14" height="34" rx="2" fill="#fff"/><rect x="224" y="94" width="10" height="40" rx="2" fill="#34D399"/></g><rect x="150" y="134" width="130" height="5" fill="#5B2FB5"/><rect x="0" y="142" width="300" height="30" fill="#9A4B6A" opacity=".85"/></svg>`,
+ coral:`<svg viewBox="0 0 300 172" preserveAspectRatio="xMaxYMax slice"><rect x="150" y="26" width="104" height="86" rx="6" fill="#FDE9D3" stroke="#B45309" stroke-width="5"/><path d="M202 26 V112 M150 69 H254" stroke="#B45309" stroke-width="4"/><circle cx="176" cy="48" r="9" fill="#FDE68A"/><rect x="0" y="136" width="300" height="36" fill="#D9704F" opacity=".7"/><circle cx="124" cy="92" r="22" fill="#fff"/><circle cx="124" cy="92" r="22" fill="none" stroke="#B45309" stroke-width="4"/><path d="M124 78 V92 L133 98" stroke="#B45309" stroke-width="3.5" fill="none" stroke-linecap="round"/><rect x="214" y="112" width="52" height="24" rx="3" fill="#4F63E6"/><rect x="220" y="100" width="40" height="12" rx="3" fill="#F59E0B"/></svg>`,
+ blue:`<svg viewBox="0 0 300 172" preserveAspectRatio="xMaxYMax slice"><g fill="#fff" opacity=".35"><circle cx="240" cy="40" r="46"/><circle cx="270" cy="70" r="30"/></g><path d="M150 140 Q200 100 270 118 V172 H150Z" fill="#fff" opacity=".25"/><g transform="translate(150 70)"><path d="M0 20 Q32 4 66 20 V68 Q32 52 0 68Z" fill="#fff"/><path d="M132 20 Q100 4 66 20 V68 Q100 52 132 68Z" fill="#E8EEFF"/></g></svg>`,
+ sky:`<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMax slice"><g fill="#fff" opacity=".85"><ellipse cx="60" cy="80" rx="46" ry="15"/><ellipse cx="95" cy="68" rx="30" ry="13"/><ellipse cx="244" cy="130" rx="50" ry="15"/></g><g fill="#CFE8F7"><rect x="20" y="250" width="30" height="110"/><rect x="58" y="222" width="36" height="140"/><rect x="104" y="266" width="28" height="94"/><rect x="190" y="236" width="34" height="124"/><rect x="232" y="206" width="40" height="154"/></g><path d="M0 330 Q150 290 300 335 V420 H0Z" fill="#7CC36B"/><path d="M0 372 Q150 340 300 374 V420 H0Z" fill="#5BAA4F"/><path d="M118 420 Q150 366 190 332 L214 332 Q172 372 164 420Z" fill="#F5E6C8"/><g transform="translate(72 262)"><path d="M0 20 Q36 0 78 20 V82 Q36 62 0 82Z" fill="#fff"/><path d="M156 20 Q120 0 78 20 V82 Q120 62 156 82Z" fill="#E8EEFF"/><path d="M78 20 V82" stroke="#4F63E6" stroke-width="3"/></g></svg>`
+};
+
+/* =====================================================================
+   STATE & DATA LAYER
+   ===================================================================== */
+const S={role:null,user:null,hash:null,page:null,q:'',f:{kat:'',sirk:'aktif',tab:'aktif',from:'',to:'',kt:'kategori',tgl:''},d:{},settings:{...DEFAULT_SET},loginRole:'anggota'};
+let sb=null,CF=null;
+const MOCK={kategori:[],buku:[],anggota:[],peminjaman:[],reservasi:[],favorit:[],pengaturan:[],sumber_buku:[],pengunjung:[]};
+
+const A={ // adapter tabel (mock / supabase)
+ async sel(t){
+  if(IS_PREVIEW)return JSON.parse(JSON.stringify(MOCK[t]));
+  let all=[],from=0;
+  for(;;){
+   const {data,error}=await sb.from(t).select('*').order('id').range(from,from+999);
+   if(error)throw error;
+   all=all.concat(data||[]);
+   if(!data||data.length<1000||from>=100000)break;
+   from+=1000;
+  }
+  return all;
+ },
+async ins(t,row){
+  if(IS_PREVIEW){const r={id:uid(),created_at:new Date().toISOString(),...row};MOCK[t].push(r);return r;}
+  const {data,error}=await sb.from(t).insert(row).select().single();
+  if(error)throw error;return data;
+ },
+ async upd(t,id,p){
+  if(IS_PREVIEW){const r=MOCK[t].find(x=>x.id===id);if(!r)throw new Error('Data tidak ditemukan');Object.assign(r,p);return r;}
+  const {data,error}=await sb.from(t).update(p).eq('id',id).select().single();
+  if(error)throw error;return data;
+ },
+ async del(t,id){
+  if(IS_PREVIEW){
+   MOCK[t]=MOCK[t].filter(x=>x.id!==id);
+   if(t==='buku'){['peminjaman','reservasi','favorit'].forEach(k=>MOCK[k]=MOCK[k].filter(x=>x.buku_id!==id));MOCK.pengunjung.forEach(v=>{if(v.buku_id===id)v.buku_id=null;});}
+   if(t==='anggota'){['peminjaman','reservasi','favorit'].forEach(k=>MOCK[k]=MOCK[k].filter(x=>x.anggota_id!==id));MOCK.pengunjung.forEach(v=>{if(v.anggota_id===id)v.anggota_id=null;});}
+   if(t==='kategori'){MOCK.buku.forEach(b=>{if(b.kategori_id===id)b.kategori_id=null;});}
+   if(t==='sumber_buku'){MOCK.buku.forEach(b=>{if(b.sumber_id===id)b.sumber_id=null;});}
+   return;
+  }
+  const {error}=await sb.from(t).delete().eq('id',id);
+  if(error)throw error;
+ }
+};
+async function rpc(name,args){
+ const {data,error}=await sb.rpc(name,args);
+ if(error)throw new Error(error.message||'Gagal memproses permintaan');
+ return data;
+}
+
+/* ===== Aksi Anggota (mock / RPC aman) ===== */
+const MEM={
+ async login(username,pw){
+  const u=username.trim().toLowerCase(),hash=await hashPw(u,pw);
+  if(IS_PREVIEW){
+   const a=MOCK.anggota.find(x=>x.username===u&&x.password_hash===hash&&x.status==='aktif');
+   if(!a)throw new Error('Username atau password salah, atau akun nonaktif');
+   const {password_hash,...rest}=a;return {user:rest,hash};
+  }
+  const data=await rpc('login_anggota',{p_username:u,p_hash:hash});
+  if(!data)throw new Error('Username atau password salah, atau akun nonaktif');
+  return {user:data,hash};
+ },
+ async loans(){
+  if(IS_PREVIEW)return MOCK.peminjaman.filter(l=>l.anggota_id===S.user.id).map(l=>{const b=MOCK.buku.find(x=>x.id===l.buku_id)||{};return {...l,buku:{id:b.id,judul:b.judul,penulis:b.penulis,cover_url:b.cover_url,kategori_id:b.kategori_id}};}).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+  return (await rpc('pinjaman_saya',{p_id:S.user.id,p_hash:S.hash}))||[];
+ },
+ async reservasi(){
+  if(IS_PREVIEW)return MOCK.reservasi.filter(r=>r.anggota_id===S.user.id).map(r=>{const b=MOCK.buku.find(x=>x.id===r.buku_id)||{};return {...r,buku:{id:b.id,judul:b.judul,penulis:b.penulis,cover_url:b.cover_url}};}).sort((a,b)=>String(b.tgl_reservasi).localeCompare(String(a.tgl_reservasi)));
+  return (await rpc('reservasi_saya',{p_id:S.user.id,p_hash:S.hash}))||[];
+ },
+ async favorit(){
+  if(IS_PREVIEW)return MOCK.favorit.filter(f=>f.anggota_id===S.user.id).map(f=>f.buku_id);
+  return (await rpc('favorit_saya',{p_id:S.user.id,p_hash:S.hash}))||[];
+ },
+ async toggleFav(buku_id){
+  if(IS_PREVIEW){const i=MOCK.favorit.findIndex(f=>f.anggota_id===S.user.id&&f.buku_id===buku_id);if(i>=0){MOCK.favorit.splice(i,1);return false;}MOCK.favorit.push({id:uid(),anggota_id:S.user.id,buku_id,created_at:new Date().toISOString()});return true;}
+  return await rpc('toggle_favorit',{p_id:S.user.id,p_hash:S.hash,p_buku:buku_id});
+ },
+ async reserve(buku_id){
+  if(IS_PREVIEW){
+   if(MOCK.reservasi.some(r=>r.anggota_id===S.user.id&&r.buku_id===buku_id&&['menunggu','siap'].includes(r.status)))throw new Error('Anda sudah mereservasi buku ini');
+   if(MOCK.peminjaman.some(l=>l.anggota_id===S.user.id&&l.buku_id===buku_id&&!l.tgl_kembali))throw new Error('Anda sedang meminjam buku ini');
+   MOCK.reservasi.push({id:uid(),anggota_id:S.user.id,buku_id,status:'menunggu',tgl_reservasi:new Date().toISOString(),created_at:new Date().toISOString()});return;
+  }
+  await rpc('buat_reservasi',{p_id:S.user.id,p_hash:S.hash,p_buku:buku_id});
+ },
+ async cancelRes(id){
+  if(IS_PREVIEW){const r=MOCK.reservasi.find(x=>x.id===id&&x.anggota_id===S.user.id);if(!r)throw new Error('Reservasi tidak ditemukan');r.status='dibatalkan';return;}
+  await rpc('batalkan_reservasi',{p_id:S.user.id,p_hash:S.hash,p_res:id});
+ },
+ async extend(loan_id){
+  if(IS_PREVIEW){
+   const l=MOCK.peminjaman.find(x=>x.id===loan_id&&x.anggota_id===S.user.id);const P=S.settings;
+   if(!l||l.tgl_kembali)throw new Error('Pinjaman tidak aktif');
+   if(l.tgl_jatuh_tempo<todayStr())throw new Error('Pinjaman sudah terlambat, tidak bisa diperpanjang');
+   if((l.perpanjangan||0)>=P.maks_perpanjang)throw new Error('Batas perpanjangan sudah tercapai');
+   l.tgl_jatuh_tempo=addDays(l.tgl_jatuh_tempo,P.lama_pinjam_hari);l.perpanjangan=(l.perpanjangan||0)+1;return;
+  }
+  await rpc('perpanjang_pinjaman',{p_id:S.user.id,p_hash:S.hash,p_loan:loan_id});
+ },
+ async changePw(oldPw,newPw){
+  const ho=await hashPw(S.user.username,oldPw),hn=await hashPw(S.user.username,newPw);
+  if(IS_PREVIEW){const a=MOCK.anggota.find(x=>x.id===S.user.id);if(!a||a.password_hash!==ho)throw new Error('Password lama salah');a.password_hash=hn;S.hash=hn;return;}
+  await rpc('ubah_password_anggota',{p_id:S.user.id,p_hash_lama:ho,p_hash_baru:hn});
+  S.hash=hn;
+ }
+};
+
+/* ===== Auto setup database ===== */
+async function seedMock(){
+ const t=todayStr();
+ const iso=(off,h,m)=>{const d=new Date(t+'T00:00:00');d.setDate(d.getDate()+off);d.setHours(h,m,0,0);return d.toISOString();};
+ MOCK.pengaturan=[{id:'set1',...DEFAULT_SET,nama_sekolah:'SMP Negeri 1 Contoh',alamat:'Jl. Pendidikan No. 1, Kota Contoh 12345',kepala_sekolah:'Drs. Ahmad Contoh, M.Pd.',nip_kepala_sekolah:'19700101 199501 1 001',kepala_perpus:'Siti Contoh, S.Pd.',nip_kepala_perpus:'19800202 200501 2 002'}];
+ const kat=[['k1','Fiksi','#F0647E'],['k2','Sains','#38BDF8'],['k3','Teknologi','#4F63E6'],['k4','Sejarah','#F59E0B'],['k5','Bisnis','#16A34A'],['k6','Anak','#A78BFA']];
+ MOCK.kategori=kat.map(([id,nama,warna])=>({id,nama,warna,created_at:iso(-30,9,0)}));
+ MOCK.sumber_buku=[['s1','Pembelian'],['s2','Hibah'],['s3','Sumbangan'],['s4','Dana BOS']].map(([id,nama])=>({id,nama,created_at:iso(-30,9,0)}));
+ const bk=[
+  ['Senja di Tepi Batanghari','Rahma Wijaya','k1',3,'Kisah seorang guru muda yang kembali ke kampung halamannya di tepi sungai dan menemukan kembali arti pulang.','https://example.com/ebook-contoh.pdf'],
+  ['Jejak Langkah Pelaut Nusantara','Dimas Prakoso','k4',2,'Penelusuran jalur pelayaran dan perdagangan para pelaut dari berbagai pelabuhan di kepulauan.',''],
+  ['Kode Pagi: Belajar Pemrograman dari Nol','Aulia Nugraha','k3',4,'Panduan bertahap untuk pemula yang ingin memahami logika pemrograman lewat proyek-proyek kecil.','https://example.com/ebook-contoh.pdf'],
+  ['Semesta dalam Sebutir Pasir','Lintang Kusuma','k2',2,'Pengantar populer tentang bagaimana hal-hal terkecil menjelaskan keteraturan alam semesta.',''],
+  ['Rahasia Bisnis Kecil yang Bertahan','Fajar Hidayat','k5',3,'Studi kasus usaha kecil yang bertahan puluhan tahun beserta pelajaran praktis pengelolaannya.',''],
+  ['Si Kancil dan Hutan Ajaib','Maya Anggraini','k6',3,'Petualangan si kancil menolong penghuni hutan dengan akal dan keberanian.','https://example.com/ebook-contoh.pdf'],
+  ['Hujan yang Kembali Pulang','Nadia Putri','k1',2,'Novel tentang persahabatan, kehilangan, dan harapan yang tumbuh di musim hujan.',''],
+  ['Basis Data untuk Pemula','Rizky Ananda','k3',3,'Memahami tabel, relasi, dan kueri dengan contoh yang dekat dengan kehidupan sehari-hari.','https://example.com/ebook-contoh.pdf'],
+  ['Menyusuri Peradaban Melayu','Hasan Basri','k4',1,'Ringkasan sejarah, bahasa, dan tradisi Melayu dari masa ke masa.',''],
+  ['Fisika di Dapur Kita','Sinta Maharani','k2',2,'Eksperimen sederhana di dapur yang menjelaskan panas, tekanan, dan perubahan wujud.',''],
+  ['Seni Mengelola Keuangan Keluarga','Bagas Pramana','k5',3,'Cara menyusun anggaran, dana darurat, dan kebiasaan finansial yang sehat.',''],
+  ['Petualangan Bintang Kecil','Oka Saputra','k6',2,'Seekor bintang kecil mencari tempatnya di langit malam dan berteman dengan bulan.','https://example.com/ebook-contoh.pdf']
+ ];
+ MOCK.buku=bk.map(([judul,penulis,kategori_id,stok,sinopsis,file_url],i)=>({id:'b'+(i+1),kode_buku:'BK-'+String(i+1).padStart(4,'0'),judul,penulis,penerbit:'Penerbit Contoh',tahun:2018+(i%7),isbn:'978-000-'+String(1000+i),kategori_id,sumber_id:'s'+((i%4)+1),sinopsis,cover_url:'',file_url,stok_total:stok,stok_tersedia:stok,created_at:iso(-20,9,0)}));
+ const ang=[['a1','AGT-0001','Anggota Contoh','anggota','anggota123','anggota@contoh.id','081200000001'],['a2','AGT-0002','Budi Santoso','budi','password123','budi@contoh.id','081200000002'],['a3','AGT-0003','Sari Melati','sari','password123','sari@contoh.id','081200000003'],['a4','AGT-0004','Dewi Anggraini','dewi','password123','dewi@contoh.id','081200000004'],['a5','AGT-0005','Andi Pratama','andi','password123','andi@contoh.id','081200000005']];
+ const KEL=['VII A','VIII B','IX C','VII B','Guru'];
+ for(const [i,[id,no,nama,username,pw,email,telepon]] of ang.entries()){MOCK.anggota.push({id,no_anggota:no,nama,username,password_hash:await hashPw(username,pw),email,telepon,kelas:KEL[i],status:'aktif',created_at:iso(-25,9,0)});}
+ // [anggota, buku, offsetPinjam, jamPinjam, menitPinjam, kembaliOffset|null, jamKembali]
+ const L=[['a1','b1',-3,9,0,null],['a1','b3',-9,9,0,null],['a2','b2',-5,9,0,null],['a2','b7',-1,14,0,null],['a2','b12',0,15,5,null],['a3','b4',0,8,15,null],['a3','b6',-4,10,0,0,11,30],['a4','b5',-12,9,0,-6,10,0],['a4','b8',0,10,40,null],['a5','b9',-8,9,0,null],['a5','b11',0,13,20,null]];
+ L.forEach(([a,b,off,h,m,kb,kh,km],i)=>{
+  const tgl=addDays(t,off),due=addDays(tgl,DEFAULT_SET.lama_pinjam_hari),ret=kb==null?null:addDays(t,kb);
+  MOCK.peminjaman.push({id:'p'+(i+1),anggota_id:a,buku_id:b,tgl_pinjam:tgl,tgl_jatuh_tempo:due,tgl_kembali:ret,status:ret?'kembali':'dipinjam',denda:0,perpanjangan:0,dikembalikan_at:ret?iso(kb,kh||10,km||0):null,created_at:iso(off,h,m)});
+ });
+ MOCK.buku.forEach(b=>{b.stok_tersedia=b.stok_total-MOCK.peminjaman.filter(l=>l.buku_id===b.id&&!l.tgl_kembali).length;});
+ MOCK.reservasi=[
+  {id:'r1',anggota_id:'a2',buku_id:'b9',status:'menunggu',tgl_reservasi:iso(-1,16,0),created_at:iso(-1,16,0)},
+  {id:'r2',anggota_id:'a4',buku_id:'b9',status:'menunggu',tgl_reservasi:iso(0,9,30),created_at:iso(0,9,30)},
+  {id:'r3',anggota_id:'a1',buku_id:'b10',status:'siap',tgl_reservasi:iso(-2,11,0),created_at:iso(-2,11,0)}
+ ];
+ MOCK.favorit=[{id:'f1',anggota_id:'a1',buku_id:'b1'},{id:'f2',anggota_id:'a1',buku_id:'b4'},{id:'f3',anggota_id:'a1',buku_id:'b6'}];
+ const VS=[[0,'a2',null,'b1',8,5,8,50],[0,'a3',null,'b4',9,10,null,null],[0,null,'Pak Hendra (Tamu)','',10,20,null,null],[0,'a5',null,'b2',10,45,11,30],[-1,'a1',null,'b3',9,0,9,40],[-1,'a4',null,'b6',10,15,11,0],[-1,null,'Bu Ratna (Tamu)','b7',13,5,13,45]];
+ MOCK.pengunjung=VS.map(([off,aid,tamu,bid,h,m,ho,mo],i)=>{const a=aid?MOCK.anggota.find(x=>x.id===aid):null;return {id:'v'+(i+1),anggota_id:aid,nama:a?a.nama:tamu,kelas:a?a.kelas:'Umum',buku_id:bid||null,keperluan:'Membaca di tempat',tanggal:addDays(t,off),jam_masuk:iso(off,h,m),jam_keluar:ho==null?null:iso(off,ho,mo),created_at:iso(off,h,m)};});
+}
+async function autoSetupDatabase(){
+ if(IS_PREVIEW){if(!MOCK.buku.length)await seedMock();return;}
+ // Mode live: hanya data awal minimal (BUKAN data dummy). Dijalankan setelah admin login (butuh hak tulis).
+ try{
+  const peng=await A.sel('pengaturan');
+  if(!peng.length)await A.ins('pengaturan',{...DEFAULT_SET});
+  const kat=await A.sel('kategori');
+  if(!kat.length){for(const [nama,warna] of [['Fiksi','#F0647E'],['Sains','#38BDF8'],['Teknologi','#4F63E6'],['Sejarah','#F59E0B'],['Bisnis','#16A34A'],['Anak','#A78BFA']])await A.ins('kategori',{nama,warna});}
+  const sum_=await A.sel('sumber_buku');
+  if(!sum_.length){for(const nama of ['Pembelian','Hibah','Sumbangan','Dana BOS'])await A.ins('sumber_buku',{nama});}
+  const ang=await A.sel('anggota');
+  if(!ang.length){await A.ins('anggota',{no_anggota:'AGT-0001',nama:'Anggota Awal',username:'anggota',password_hash:await hashPw('anggota','anggota123'),email:null,telepon:null,status:'aktif'});}
+ }catch(e){console.warn('autoSetupDatabase:',e);toast('Setup awal gagal: '+(e.message||e)+'. Pastikan SQL sudah dijalankan.','err');}
+}
+
+/* ===== Loader data ===== */
+async function loadAdminData(){
+ const r=await Promise.all(['kategori','buku','anggota','peminjaman','reservasi','pengaturan','sumber_buku','pengunjung'].map(t=>A.sel(t)));
+ S.d={kategori:r[0],buku:r[1],anggota:r[2],peminjaman:r[3],reservasi:r[4],sumber_buku:r[6],pengunjung:r[7]};
+ S.settings={...DEFAULT_SET,...(r[5][0]||{})};
+}
+async function loadMemberData(){
+ const [kategori,buku,pengaturan]=await Promise.all([A.sel('kategori'),A.sel('buku'),A.sel('pengaturan')]);
+ S.settings={...DEFAULT_SET,...(pengaturan[0]||{})};
+ const [loans,reservasi,favorit]=await Promise.all([MEM.loans(),MEM.reservasi(),MEM.favorit()]);
+ S.d={kategori,buku,loans,reservasi,favorit};
+}
+const refresh=async()=>{S.role==='admin'?await loadAdminData():await loadMemberData();render();};
+
+/* ===== Logika sirkulasi ===== */
+function loanInfo(l){
+ const P=S.settings;
+ if(l.tgl_kembali)return {key:'kembali',label:'Dikembalikan',cls:'ok',late:0,denda:Number(l.denda||0)};
+ const late=Math.max(0,diffDays(todayStr(),l.tgl_jatuh_tempo));
+ if(late>0)return {key:'terlambat',label:`Terlambat ${late} hari`,cls:'bad',late,denda:late*P.denda_per_hari};
+ const sisa=diffDays(l.tgl_jatuh_tempo,todayStr());
+ return {key:'dipinjam',label:sisa===0?'Jatuh tempo hari ini':`Sisa ${sisa} hari`,cls:sisa<=1?'warn':'info',late:0,denda:0,sisa};
+}
+async function doPinjam(anggota_id,buku_id,tgl){
+ const b=S.d.buku.find(x=>x.id===buku_id);
+ if(!b||b.stok_tersedia<1)throw new Error('Stok buku habis');
+ const aktif=S.d.peminjaman.filter(p=>p.anggota_id===anggota_id&&!p.tgl_kembali);
+ if(aktif.length>=S.settings.maks_pinjam)throw new Error(`Anggota sudah mencapai batas ${S.settings.maks_pinjam} pinjaman`);
+ if(aktif.some(p=>p.buku_id===buku_id))throw new Error('Anggota sedang meminjam buku yang sama');
+ await A.ins('peminjaman',{anggota_id,buku_id,tgl_pinjam:tgl,tgl_jatuh_tempo:addDays(tgl,S.settings.lama_pinjam_hari),tgl_kembali:null,status:'dipinjam',denda:0,perpanjangan:0});
+ await A.upd('buku',buku_id,{stok_tersedia:b.stok_tersedia-1});
+}
+async function doKembali(id){
+ const l=S.d.peminjaman.find(x=>x.id===id);if(!l||l.tgl_kembali)throw new Error('Pinjaman sudah dikembalikan');
+ const info=loanInfo(l);
+ await A.upd('peminjaman',id,{tgl_kembali:todayStr(),status:'kembali',denda:info.denda,dikembalikan_at:new Date().toISOString()});
+ const b=S.d.buku.find(x=>x.id===l.buku_id);
+ if(b)await A.upd('buku',b.id,{stok_tersedia:Math.min(b.stok_total,b.stok_tersedia+1)});
+ return {denda:info.denda,antri:S.d.reservasi.filter(r=>r.buku_id===l.buku_id&&r.status==='menunggu').length};
+}
+async function doPerpanjang(id){
+ const l=S.d.peminjaman.find(x=>x.id===id),P=S.settings;
+ if(!l||l.tgl_kembali)throw new Error('Pinjaman tidak aktif');
+ if(loanInfo(l).late>0)throw new Error('Pinjaman sudah terlambat, tidak bisa diperpanjang');
+ if((l.perpanjangan||0)>=P.maks_perpanjang)throw new Error('Batas perpanjangan sudah tercapai');
+ await A.upd('peminjaman',id,{tgl_jatuh_tempo:addDays(l.tgl_jatuh_tempo,P.lama_pinjam_hari),perpanjangan:(l.perpanjangan||0)+1});
+}
+
+/* =====================================================================
+   UI HELPERS
+   ===================================================================== */
+const match=str=>!S.q||String(str).toLowerCase().includes(S.q.toLowerCase());
+const busy=on=>{$('#busy').hidden=!on;};
+function toast(msg,type){const t=$('#toast');if(type==='err'&&/row-level security/i.test(String(msg)))msg='Ditolak oleh keamanan database. Pastikan Anda login sebagai admin dan email-nya terdaftar di tabel admin_users (lihat panduan).';t.textContent=msg;t.className='toast'+(type==='err'?' err':'');t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,3600);}
+async function run(fn){try{busy(true);return await fn();}catch(e){console.error(e);toast(e.message||'Terjadi kesalahan','err');}finally{busy(false);}}
+function openModal(html,wide){const o=$('#ov');o.innerHTML=`<div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true">${html}</div>`;o.hidden=false;const f=$('input,select,textarea',o);if(f&&window.innerWidth>900)setTimeout(()=>f.focus(),50);}
+function closeModal(){const o=$('#ov');o.hidden=true;o.innerHTML='';const f=CF;CF=null;if(f)f(false);}
+function confirmBox(msg,label='Ya, lanjutkan'){return new Promise(res=>{openModal(`<h3 class="m-title">Konfirmasi</h3><p class="m-p">${msg}</p><div class="m-act"><button class="btn ghost" data-act="cfNo">Batal</button><button class="btn danger" data-act="cfYes">${label}</button></div>`);CF=res;});}
+function openForm({title,fields,values={},submitLabel='Simpan',onSubmit,wide}){
+ const body=fields.map(f=>{
+  if(f.type==='scan')return `<div class="fld ${f.full?'full':''}"><span>${f.label}</span><div class="scanrow"><input data-scan="${f.kind}" data-target="${f.target}" placeholder="${esc(f.placeholder||'')}" autocomplete="off" aria-label="${esc(f.label)}"><button type="button" class="ib" data-act="scanFor" data-kind="${f.kind}" data-target="${f.target}" aria-label="Scan dengan kamera">${ic('camera',18)}</button></div><small class="scanok" data-for="${f.kind}"></small></div>`;
+  const val=values[f.name]??f.default??'';let inp;
+  if(f.type==='select')inp=`<select name="${f.name}" ${f.required?'required':''}>${f.options.map(o=>`<option value="${esc(o.v)}" ${String(o.v)===String(val)?'selected':''}>${esc(o.t)}</option>`).join('')}</select>`;
+  else if(f.type==='textarea')inp=`<textarea name="${f.name}" rows="3">${esc(val)}</textarea>`;
+  else inp=`<input name="${f.name}" type="${f.type||'text'}" value="${esc(val)}" ${f.required?'required':''} ${f.min!=null?`min="${f.min}"`:''} ${f.placeholder?`placeholder="${esc(f.placeholder)}"`:''} ${f.type==='password'?'autocomplete="new-password"':''}>`;
+  if(f.scanTo)inp=`<div class="scanrow">${inp}<button type="button" class="ib" data-act="scanFor" data-kind="kode" data-fill="${f.name}" aria-label="Scan dengan kamera">${ic('camera',18)}</button></div>`;
+  return `<label class="fld ${f.full?'full':''}"><span>${f.label}${f.required?' *':''}</span>${inp}${f.hint?`<small>${f.hint}</small>`:''}</label>`;
+ }).join('');
+ openModal(`<form id="frmModal" class="form-grid"><h3 class="m-title">${title}</h3>${body}<div class="m-act"><button type="button" class="btn ghost" data-act="closeModal">Batal</button><button class="btn" type="submit">${submitLabel}</button></div></form>`,wide);
+ $('#frmModal').onsubmit=async e=>{
+  e.preventDefault();const btn=$('button[type=submit]',e.target);btn.disabled=true;busy(true);
+  try{await onSubmit(Object.fromEntries(new FormData(e.target)));closeModal();}
+  catch(err){console.error(err);toast(err.message||'Terjadi kesalahan','err');btn.disabled=false;}
+  finally{busy(false);}
+ };
+}
+const ph=(title,right='')=>`<div class="ph"><h1>${title}</h1>${right}</div>`;
+const av=n=>`<span class="avatar sm" style="background:linear-gradient(135deg,hsl(${hashNum(n)%360} 75% 62%),hsl(${(hashNum(n)+40)%360} 75% 52%))">${esc(initials(n))}</span>`;
+const tbl=(cols,rows,empty='Belum ada data')=>rows.length?`<div class="tw"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td data-l="${esc(cols[i])}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:`<div class="empty">${ic('book',34)}<p>${empty}</p></div>`;
+const PAL=[['#6D83F2','#4F63E6'],['#34D399','#059669'],['#F59E0B','#EA580C'],['#F472B6','#DB2777'],['#A78BFA','#7C3AED'],['#38BDF8','#0284C7'],['#FB7185','#E11D48'],['#2DD4BF','#0D9488']];
+function cover(b,cls=''){
+ const [c1,c2]=PAL[hashNum(b.id||b.judul)%PAL.length];
+ const u=safeUrl(b.cover_url);
+ return `<div class="cover ${cls}" style="background:linear-gradient(145deg,${c1},${c2})"><div class="cv-in">${ic('book',28)}<span>${esc(b.judul)}</span></div>${u?`<img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:''}</div>`;
+}
+const katName=id=>(S.d.kategori.find(k=>k.id===id)||{}).nama||'Umum';
+const stokBd=b=>b.stok_tersedia>0?`<span class="bd ok">${b.stok_tersedia} tersedia</span>`:`<span class="bd bad">Dipinjam semua</span>`;
+function bookCard(b){
+ const fav=S.role==='anggota'&&S.d.favorit.includes(b.id);
+ return `<div class="bcard" data-act="bookDetail" data-id="${b.id}" tabindex="0">${cover(b)}<div class="bc-body"><div class="bc-cat">${esc(katName(b.kategori_id))}</div><div class="bc-title">${esc(b.judul)}</div><div class="bc-author">${esc(b.penulis)}</div><div class="bc-foot">${stokBd(b)}${S.role==='anggota'?`<button class="heart ${fav?'on':''}" data-act="favToggle" data-id="${b.id}" aria-label="Favorit">${ic('heart',15)}</button>`:''}</div></div></div>`;
+}
+const chips=()=>`<div class="chips"><button class="chip ${!S.f.kat?'on':''}" data-act="fkat" data-id="">Semua</button>${S.d.kategori.map(k=>`<button class="chip ${S.f.kat===k.id?'on':''}" data-act="fkat" data-id="${k.id}">${esc(k.nama)}</button>`).join('')}</div>`;
+const statCard=(cls,t,big,sub,ill,bar)=>`<div class="stat ${cls}"><div class="ill">${ILLU[ill]}</div><h3>${t}</h3><div class="pc">${big}</div><div class="sub">${sub}</div>${bar!=null?`<div class="bar"><i style="width:${Math.min(100,bar)}%"></i></div>`:''}</div>`;
+
+/* =====================================================================
+   NAVIGASI
+   ===================================================================== */
+const NAV={
+ admin:[['dashboard','Dashboard','dash'],['buku','Katalog Buku','book'],['kategori','Kategori & Sumber','tag'],['anggota','Anggota','users'],['sirkulasi','Sirkulasi','repeat'],['pengunjung','Pengunjung','door'],['reservasi','Reservasi','bookmark'],['laporan','Laporan','chart'],['pengaturan','Pengaturan','sliders']],
+ anggota:[['beranda','Beranda','home'],['katalog','Katalog','book'],['pinjaman','Pinjaman Saya','repeat'],['favorit','Favorit & Reservasi','heart'],['profil','Profil','user']]
+};
+const MOBILE_MAIN={admin:['dashboard','buku','sirkulasi','pengunjung'],anggota:['beranda','katalog','pinjaman','favorit','profil']};
+const SEARCHABLE={admin:['buku','anggota','sirkulasi','reservasi','pengunjung'],anggota:['katalog']};
+function renderNav(){
+ const items=NAV[S.role];
+ $('#side-nav').innerHTML=items.map(([k,l,i])=>`<button class="nv ${S.page===k?'on':''}" data-act="nav" data-p="${k}" aria-label="${l}"><span>${ic(i)}</span><em class="tip">${l}</em></button>`).join('');
+ let b=MOBILE_MAIN[S.role].map(k=>{const [,l,i]=items.find(x=>x[0]===k);const short={'Katalog Buku':'Buku','Pinjaman Saya':'Pinjaman','Favorit & Reservasi':'Favorit','Kategori & Sumber':'Kategori'}[l]||l;return `<button class="${S.page===k?'on':''}" data-act="nav" data-p="${k}">${ic(i,22)}<span>${short}</span></button>`;}).join('');
+ if(S.role==='admin'){const inMore=!MOBILE_MAIN.admin.includes(S.page);b+=`<button class="${inMore?'on':''}" data-act="moreMenu">${ic('more',22)}<span>Lainnya</span></button>`;}
+ $('#bnav').innerHTML=b;
+}
+function renderTop(){
+ $('#top-av').textContent=initials(S.user?.nama||'A');
+ $('#bell-dot').hidden=getNotifs().length===0;
+ $('#q').value=S.q;
+}
+function getNotifs(){
+ const n=[];
+ if(S.role==='admin'){
+  const late=S.d.peminjaman.filter(l=>!l.tgl_kembali&&loanInfo(l).late>0);
+  const due=S.d.peminjaman.filter(l=>!l.tgl_kembali&&loanInfo(l).key==='dipinjam'&&loanInfo(l).sisa===0);
+  const rs=S.d.reservasi.filter(r=>r.status==='menunggu');
+  if(late.length)n.push({t:`${late.length} pinjaman terlambat`,s:'Segera hubungi anggota terkait.',cls:'bad',p:'sirkulasi',tab:'terlambat'});
+  if(due.length)n.push({t:`${due.length} pinjaman jatuh tempo hari ini`,s:'Siapkan proses pengembalian.',cls:'warn',p:'sirkulasi',tab:'aktif'});
+  if(rs.length)n.push({t:`${rs.length} reservasi menunggu diproses`,s:'Tandai siap atau pinjamkan.',cls:'info',p:'reservasi'});
+  const habis=S.d.buku.filter(b=>b.stok_tersedia===0).length;
+  if(habis)n.push({t:`${habis} judul stoknya habis`,s:'Pertimbangkan menambah eksemplar.',cls:'gray',p:'buku'});
+ }else{
+  S.d.loans.filter(l=>!l.tgl_kembali).forEach(l=>{const i=loanInfo(l);
+   if(i.late>0)n.push({t:`"${l.buku.judul}" terlambat ${i.late} hari`,s:`Denda berjalan ${rupiah(i.denda)}. Segera kembalikan.`,cls:'bad',p:'pinjaman'});
+   else if(i.sisa<=2)n.push({t:`"${l.buku.judul}" jatuh tempo ${i.sisa===0?'hari ini':i.sisa+' hari lagi'}`,s:'Perpanjang atau kembalikan tepat waktu.',cls:'warn',p:'pinjaman'});});
+  S.d.reservasi.filter(r=>r.status==='siap').forEach(r=>n.push({t:`Reservasi "${r.buku.judul}" siap diambil`,s:'Ambil di meja sirkulasi perpustakaan.',cls:'ok',p:'favorit'}));
+ }
+ return n;
+}
+function featured(){
+ const B=S.d.buku;if(!B.length)return null;
+ if(S.role==='admin'&&S.d.peminjaman.length){const c={};S.d.peminjaman.forEach(l=>c[l.buku_id]=(c[l.buku_id]||0)+1);const top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];const b=B.find(x=>x.id===top[0]);if(b)return b;}
+ const doy=Math.floor((new Date()-new Date(new Date().getFullYear(),0,0))/864e5);
+ return B[doy%B.length];
+}
+function renderPanel(){
+ const b=featured(),el=$('#panel');
+ if(!b){el.innerHTML='';return;}
+ el.innerHTML=`<div class="illu">${ILLU.sky}</div><small class="p-tag">Buku Pilihan</small><h2>${esc(b.judul)}</h2><div class="big">${b.stok_tersedia}<span>eksemplar tersedia</span></div><div class="p-line">${ic('book',14)} ${esc(katName(b.kategori_id))} · ${esc(b.penulis)}</div><button class="btn" data-act="bookDetail" data-id="${b.id}">More Details</button>`;
+}
+function renderFab(){
+ const f=$('#fab');
+ const show=S.role==='admin'?['dashboard','sirkulasi'].includes(S.page):S.page==='beranda';
+ f.hidden=!show;f.innerHTML=ic('plus',24);
+ f.setAttribute('aria-label',S.role==='admin'?'Pinjamkan buku':'Cari buku');
+}
+function renderPage(){const fn=(S.role==='admin'?ADMIN:MEMBER)[S.page];$('#page').innerHTML=fn?fn():'';}
+/* ===== BRANDING (nama aplikasi, logo, sekolah) ===== */
+function setManifest(){
+ try{
+  const icon='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#4F63E6"/><path d="M96 130h110a50 50 0 0 1 50 50v206a40 40 0 0 0-40-40H96z" fill="#fff"/><path d="M416 130H306a50 50 0 0 0-50 50v206a40 40 0 0 1 40-40h120z" fill="#DDE2FF"/></svg>');
+  const nm=S.settings.nama_aplikasi||'Perpustakaan Digital';
+  const m={name:nm,short_name:nm.slice(0,12),start_url:location.href.split('#')[0],scope:location.href.split('#')[0],display:'standalone',orientation:'portrait',background_color:'#ffffff',theme_color:'#4F63E6',icons:[{src:icon,sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};
+  let l=document.querySelector('link[rel="manifest"]');if(!l){l=document.createElement('link');l.rel='manifest';document.head.appendChild(l);}
+  l.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(m));
+ }catch(e){console.warn('Manifest:',e);}
+}
+function renderLogo(){
+ const P=S.settings,logo=safeImg(P.logo_url),el=$('#logo');if(!el)return;
+ el.innerHTML=`${logo?`<img src="${esc(logo)}" alt="">`:`<span class="lg-badge">${esc(initials(P.nama_aplikasi||'P'))}</span>`}<small>${esc(P.nama_aplikasi||'')}</small>`;
+}
+function applyBranding(){
+ const P=S.settings,logo=safeImg(P.logo_url);
+ $('#lg-name').textContent=P.nama_aplikasi||'Perpustakaan Digital';
+ const lg=$('#lg-logo');if(logo){lg.src=logo;lg.hidden=false;}else{lg.hidden=true;lg.removeAttribute('src');}
+ $('#lg-school').textContent=P.nama_sekolah||'';
+ renderLogo();setManifest();
+}
+async function loadPublicSettings(){
+ try{const r=await A.sel('pengaturan');if(r[0])S.settings={...DEFAULT_SET,...r[0]};}catch(e){console.warn('Pengaturan publik:',e);}
+}
+function render(){renderNav();renderTop();renderPage();renderPanel();renderFab();renderLogo();}
+function go(p){S.page=p;S.q=(SEARCHABLE[S.role].includes(p)?S.q:'');render();$('#main').scrollTo({top:0,behavior:'auto'});}
+
+/* =====================================================================
+   HALAMAN ADMIN
+   ===================================================================== */
+const ADMIN={};
+function timelineHtml(){
+ const t=todayStr(),COL=72,H0=7,H1=19,ev=[];
+ S.d.peminjaman.forEach(l=>{
+  const a=S.d.anggota.find(x=>x.id===l.anggota_id),b=S.d.buku.find(x=>x.id===l.buku_id);if(!a||!b)return;
+  if(l.created_at&&ymd(new Date(l.created_at))===t)ev.push({at:new Date(l.created_at),k:'Dipinjam',title:b.judul,who:a.nama});
+  if(l.dikembalikan_at&&ymd(new Date(l.dikembalikan_at))===t)ev.push({at:new Date(l.dikembalikan_at),k:'Dikembalikan',title:b.judul,who:a.nama});
+ });
+ ev.sort((x,y)=>x.at-y.at);
+ const now=new Date(),nh=Math.min(H1,Math.max(H0,now.getHours()+now.getMinutes()/60));
+ const hours=[];for(let h=H0;h<=H1;h++)hours.push(h);
+ let latest=ev.findIndex(e=>e.at>=now);if(latest<0)latest=ev.length-1;
+ const ends=[];let items='';
+ ev.forEach((e,i)=>{
+  const hh=Math.min(H1+.3,Math.max(H0,e.at.getHours()+e.at.getMinutes()/60)),left=(hh-H0)*COL;
+  let r=0;while(ends[r]!==undefined&&ends[r]>left-12)r++;ends[r]=left+250;
+  items+=`<div class="tl-it ${i===latest?'hot':''}" style="left:${left}px;top:${r*66}px"><div><small>${e.k} · ${pad(e.at.getHours())}.${pad(e.at.getMinutes())}</small><b>${esc(e.title)}</b></div>${av(e.who)}</div>`;
+ });
+ const rows=Math.max(1,ends.length);
+ return `<div class="tl-scroll"><div class="tl" style="width:${(H1-H0)*COL+300}px"><div class="tl-h">${hours.map(h=>`<span class="${Math.floor(nh)===h?'on':''}" style="left:${(h-H0)*COL}px">${pad(h)}.00</span>`).join('')}</div><div class="tl-b" style="height:${rows*66+16}px"><i class="tl-now" style="left:${(nh-H0)*COL+26}px"></i>${items}</div></div></div>${ev.length?'':'<div class="empty small"><p>Belum ada aktivitas sirkulasi hari ini</p></div>'}`;
+}
+ADMIN.dashboard=()=>{
+ const B=S.d.buku,L=S.d.peminjaman;
+ const total=sum(B,b=>b.stok_total),avail=sum(B,b=>b.stok_tersedia);
+ const aktif=L.filter(l=>!l.tgl_kembali),late=aktif.filter(l=>loanInfo(l).late>0);
+ const pc=(a,b)=>b?Math.round(a/b*100):0;
+ const now=new Date();
+ return `${ph('Dashboard Perpustakaan',`<button class="pill" data-act="bukuForm">${ic('plus',18)} Tambah Buku</button>`)}
+ <div class="stats">
+  ${statCard('c-green','Buku Dipinjam',pc(aktif.length,total)+'%',`${aktif.length} dari ${total} eksemplar`,'green',pc(aktif.length,total))}
+  ${statCard('c-purple','Buku Tersedia',pc(avail,total)+'%',`${avail} eksemplar siap dipinjam`,'purple',pc(avail,total))}
+  ${statCard('c-coral','Pinjaman Terlambat',pc(late.length,aktif.length)+'%',`${late.length} dari ${aktif.length} pinjaman aktif`,'coral',pc(late.length,aktif.length))}
+ </div>
+ <div class="ph" style="margin:30px 0 8px"><div class="h2" style="margin:0"><span>Hari ini,</span> ${now.getDate()} ${BULAN[now.getMonth()]} ${now.getFullYear()}</div></div>
+ ${timelineHtml()}
+ <div class="grid2" style="margin-top:26px">
+  <div class="card"><div class="h3" style="margin-top:0">Ringkasan Koleksi</div><dl class="kv"><dt>Judul buku</dt><dd>${B.length}</dd><dt>Total eksemplar</dt><dd>${total}</dd><dt>Anggota aktif</dt><dd>${S.d.anggota.filter(a=>a.status==='aktif').length}</dd><dt>Reservasi menunggu</dt><dd>${S.d.reservasi.filter(r=>r.status==='menunggu').length}</dd><dt>Pengunjung hari ini</dt><dd>${S.d.pengunjung.filter(v=>v.tanggal===todayStr()).length}</dd></dl></div>
+  <div class="card"><div class="h3" style="margin-top:0">Perlu Perhatian</div>${getNotifs().map(n=>`<p style="margin:0 0 10px"><span class="bd ${n.cls}">${esc(n.t)}</span><br><small style="color:#6B7280">${esc(n.s)}</small></p>`).join('')||'<p style="color:#6B7280">Semua beres, tidak ada yang perlu ditindaklanjuti.</p>'}</div>
+ </div>`;
+};
+const sumberName=id=>((S.d.sumber_buku||[]).find(s=>s.id===id)||{}).nama||'-';
+function filteredBuku(){return S.d.buku.filter(b=>(!S.f.kat||b.kategori_id===S.f.kat)&&match(`${b.judul} ${b.penulis} ${b.isbn||''} ${b.kode_buku||''}`));}
+ADMIN.buku=()=>{
+ const list=filteredBuku();
+ return `${ph('Katalog Buku',`<div class="acts"><button class="pill" data-act="printBuku">${ic('printer',18)} Cetak Koleksi</button><button class="pill" data-act="printLabel">${ic('scan',18)} Cetak Label</button><button class="pill" data-act="bukuForm">${ic('plus',18)} Tambah Buku</button></div>`)}${chips()}
+ ${tbl(['Buku','Kode','Kategori','Stok','E-book','Aksi'],list.map(b=>[
+  `<div class="cellbook">${cover(b,'mini')}<div><b>${esc(b.judul)}</b><small>${esc(b.penulis)}${b.tahun?' · '+b.tahun:''}</small></div></div>`,
+  b.kode_buku?`<span class="code">${esc(b.kode_buku)}</span>`:'-',
+  `${esc(katName(b.kategori_id))}<br><small style="color:#6B7280">${esc(sumberName(b.sumber_id))}</small>`,
+  `${stokBd(b)} <small style="color:#6B7280">dari ${b.stok_total}</small>`,
+  safeUrl(b.file_url)?`<span class="bd info">Ada</span>`:`<span class="bd gray">-</span>`,
+  `<div class="acts"><button class="ib" data-act="bookDetail" data-id="${b.id}" aria-label="Detail">${ic('search',16)}</button><button class="ib" data-act="bukuForm" data-id="${b.id}" aria-label="Ubah">${ic('edit',16)}</button><button class="ib red" data-act="bukuDel" data-id="${b.id}" aria-label="Hapus">${ic('trash',16)}</button></div>`
+ ]),'Buku tidak ditemukan')}`;
+};
+ADMIN.kategori=()=>{
+ const T=S.f.kt||'kategori';
+ const tab=(k,l)=>`<button class="${T===k?'on':''}" data-act="ftab" data-k="kt" data-v="${k}">${l}</button>`;
+ const tabs=`<div class="tabs">${tab('kategori','Kategori')}${tab('sumber','Sumber Buku')}</div>`;
+ if(T==='sumber'){
+  return `${ph('Sumber Buku',`<button class="pill" data-act="sumberForm">${ic('plus',18)} Tambah Sumber</button>`)}${tabs}
+  <div class="kgrid">${S.d.sumber_buku.map(s=>{const n=S.d.buku.filter(b=>b.sumber_id===s.id).length;return `<div class="kcard"><i style="background:${PAL[hashNum(s.id)%PAL.length][1]}"></i><div><b>${esc(s.nama)}</b><small>${n} judul buku</small></div><div class="acts"><button class="ib" data-act="sumberForm" data-id="${s.id}" aria-label="Ubah">${ic('edit',16)}</button><button class="ib red" data-act="sumberDel" data-id="${s.id}" aria-label="Hapus">${ic('trash',16)}</button></div></div>`;}).join('')||'<div class="empty"><p>Belum ada sumber buku</p></div>'}</div>`;
+ }
+ return `${ph('Kategori Buku',`<button class="pill" data-act="katForm">${ic('plus',18)} Tambah Kategori</button>`)}${tabs}
+ <div class="kgrid">${S.d.kategori.map(k=>{const n=S.d.buku.filter(b=>b.kategori_id===k.id).length;return `<div class="kcard"><i style="background:${esc(k.warna||'#4F63E6')}"></i><div><b>${esc(k.nama)}</b><small>${n} judul buku</small></div><div class="acts"><button class="ib" data-act="katForm" data-id="${k.id}" aria-label="Ubah">${ic('edit',16)}</button><button class="ib red" data-act="katDel" data-id="${k.id}" aria-label="Hapus">${ic('trash',16)}</button></div></div>`;}).join('')||'<div class="empty"><p>Belum ada kategori</p></div>'}</div>`;
+};
+ADMIN.anggota=()=>{
+ const list=S.d.anggota.filter(a=>match(`${a.nama} ${a.no_anggota} ${a.username} ${a.email||''} ${a.kelas||''}`));
+ return `${ph('Anggota',`<div class="acts"><button class="pill" data-act="kartuAll">${ic('printer',18)} Cetak Kartu</button><button class="pill" data-act="agtForm">${ic('plus',18)} Tambah Anggota</button></div>`)}
+ ${tbl(['Anggota','Username','Kontak','Pinjaman Aktif','Status','Aksi'],list.map(a=>[
+  `<div class="cellusr">${av(a.nama)}<div><b>${esc(a.nama)}</b><small>${esc(a.no_anggota)}${a.kelas?' · '+esc(a.kelas):''}</small></div></div>`,
+  esc(a.username),
+  `${esc(a.email||'-')}<br><small style="color:#6B7280">${esc(a.telepon||'')}</small>`,
+  S.d.peminjaman.filter(l=>l.anggota_id===a.id&&!l.tgl_kembali).length,
+  `<span class="bd ${a.status==='aktif'?'ok':'gray'}">${a.status==='aktif'?'Aktif':'Nonaktif'}</span>`,
+  `<div class="acts"><button class="ib" data-act="kartu" data-id="${a.id}" aria-label="Kartu anggota">${ic('card',16)}</button><button class="ib" data-act="agtForm" data-id="${a.id}" aria-label="Ubah">${ic('edit',16)}</button><button class="ib red" data-act="agtDel" data-id="${a.id}" aria-label="Hapus">${ic('trash',16)}</button></div>`
+ ]),'Anggota tidak ditemukan')}`;
+};
+ADMIN.sirkulasi=()=>{
+ const T=S.f.sirk,all=[...S.d.peminjaman].sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+ const list=all.filter(l=>{const i=loanInfo(l);
+  const okTab=T==='semua'||(T==='aktif'&&!l.tgl_kembali)||(T==='terlambat'&&i.key==='terlambat')||(T==='riwayat'&&l.tgl_kembali);
+  const a=S.d.anggota.find(x=>x.id===l.anggota_id)||{},b=S.d.buku.find(x=>x.id===l.buku_id)||{};
+  return okTab&&match(`${a.nama} ${a.no_anggota} ${b.judul}`);});
+ const tab=(k,l)=>`<button class="${T===k?'on':''}" data-act="ftab" data-k="sirk" data-v="${k}">${l}</button>`;
+ return `${ph('Sirkulasi',`<div class="acts"><button class="pill" data-act="scanReturn">${ic('scan',18)} Scan Pengembalian</button><button class="pill" data-act="pinjamForm">${ic('plus',18)} Pinjamkan Buku</button></div>`)}
+ <div class="tabs">${tab('aktif','Aktif')}${tab('terlambat','Terlambat')}${tab('riwayat','Riwayat')}${tab('semua','Semua')}</div>
+ ${tbl(['Anggota','Buku','Dipinjam','Jatuh Tempo','Status','Denda','Aksi'],list.map(l=>{
+  const a=S.d.anggota.find(x=>x.id===l.anggota_id)||{nama:'(dihapus)',no_anggota:''},b=S.d.buku.find(x=>x.id===l.buku_id)||{judul:'(dihapus)'},i=loanInfo(l);
+  return [`<div class="cellusr">${av(a.nama)}<div><b>${esc(a.nama)}</b><small>${esc(a.no_anggota)}</small></div></div>`,esc(b.judul),fmtD(l.tgl_pinjam),fmtD(l.tgl_jatuh_tempo)+(l.perpanjangan?` <small style="color:#6B7280">(+${l.perpanjangan}x)</small>`:''),`<span class="bd ${i.cls}">${i.label}</span>`,i.denda?rupiah(i.denda):'-',
+   l.tgl_kembali?`<small style="color:#6B7280">${fmtD(l.tgl_kembali)}</small>`:`<div class="acts"><button class="btn sm" data-act="kembali" data-id="${l.id}">${ic('undo',14)} Kembalikan</button><button class="btn sm ghost" data-act="perpanjang" data-id="${l.id}">Perpanjang</button></div>`];
+ }),'Tidak ada data sirkulasi')}`;
+};
+const RES_LBL={menunggu:['Menunggu','warn'],siap:['Siap diambil','info'],selesai:['Selesai','ok'],dibatalkan:['Dibatalkan','gray']};
+ADMIN.reservasi=()=>{
+ const list=[...S.d.reservasi].sort((a,b)=>String(b.tgl_reservasi).localeCompare(String(a.tgl_reservasi))).filter(r=>{const a=S.d.anggota.find(x=>x.id===r.anggota_id)||{},b=S.d.buku.find(x=>x.id===r.buku_id)||{};return match(`${a.nama} ${b.judul}`);});
+ return `${ph('Reservasi')}${tbl(['Anggota','Buku','Tanggal','Status','Aksi'],list.map(r=>{
+  const a=S.d.anggota.find(x=>x.id===r.anggota_id)||{nama:'(dihapus)',no_anggota:''},b=S.d.buku.find(x=>x.id===r.buku_id)||{judul:'(dihapus)'},[l,c]=RES_LBL[r.status]||['-','gray'];
+  const act=r.status==='menunggu'?`<button class="btn sm" data-act="resSiap" data-id="${r.id}">Tandai Siap</button><button class="btn sm ghost" data-act="resBatal" data-id="${r.id}">Batalkan</button>`:r.status==='siap'?`<button class="btn sm" data-act="resPinjam" data-id="${r.id}">Pinjamkan</button><button class="btn sm ghost" data-act="resBatal" data-id="${r.id}">Batalkan</button>`:'<small style="color:#6B7280">-</small>';
+  return [`<div class="cellusr">${av(a.nama)}<div><b>${esc(a.nama)}</b><small>${esc(a.no_anggota)}</small></div></div>`,esc(b.judul),fmtD(r.tgl_reservasi),`<span class="bd ${c}">${l}</span>`,`<div class="acts">${act}</div>`];
+ }),'Belum ada reservasi')}`;
+};
+ADMIN.pengunjung=()=>{
+ const D=S.f.tgl||todayStr(),all=S.d.pengunjung;
+ const dayAll=all.filter(v=>v.tanggal===D);
+ const day=dayAll.filter(v=>match(`${v.nama} ${v.kelas||''}`)).sort((a,b)=>String(a.jam_masuk).localeCompare(String(b.jam_masuk)));
+ const inside=dayAll.filter(v=>!v.jam_keluar).length;
+ const month=all.filter(v=>String(v.tanggal).startsWith(D.slice(0,7))).length;
+ const bookT=id=>id?((S.d.buku.find(b=>b.id===id)||{}).judul||'(dihapus)'):'-';
+ return `${ph('Pengunjung Harian',`<button class="pill" data-act="pengForm">${ic('plus',18)} Catat Kunjungan</button>`)}
+ <div class="card" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px"><label class="fld"><span>Tanggal</span><input type="date" id="pgDate" value="${D}"></label><button class="btn ghost" data-act="pgToday">Hari ini</button></div>
+ <div class="stats">
+  ${statCard('c-blue','Pengunjung',dayAll.length,fmtLong(D),'blue')}
+  ${statCard('c-purple','Masih di Perpustakaan',inside,'belum tercatat keluar','purple')}
+  ${statCard('c-green','Total Bulan Ini',month,`kunjungan sepanjang ${BULAN_FULL[+D.slice(5,7)-1]}`,'green')}
+ </div>
+ <div class="h3">Daftar kunjungan</div>
+ ${tbl(['Masuk','Pengunjung','Keperluan','Buku dibaca','Keluar','Aksi'],day.map(v=>[
+  fmtTime(v.jam_masuk),
+  `<div class="cellusr">${av(v.nama)}<div><b>${esc(v.nama)}</b><small>${esc(v.kelas||'-')} · ${v.anggota_id?'Anggota':'Tamu'}</small></div></div>`,
+  esc(v.keperluan||'-'),
+  esc(bookT(v.buku_id)),
+  v.jam_keluar?fmtTime(v.jam_keluar):'<span class="bd warn">Di dalam</span>',
+  `<div class="acts">${v.jam_keluar?'':`<button class="btn sm" data-act="pgOut" data-id="${v.id}">Tandai keluar</button>`}<button class="ib red" data-act="pgDel" data-id="${v.id}" aria-label="Hapus">${ic('trash',16)}</button></div>`
+ ]),'Belum ada kunjungan pada tanggal ini')}`;
+};
+function lapRange(){
+ if(!S.f.from){const n=new Date();S.f.from=ymd(new Date(n.getFullYear(),n.getMonth(),1));S.f.to=todayStr();}
+ return [S.f.from,S.f.to];
+}
+function lapLoans(){const [f,t]=lapRange();return S.d.peminjaman.filter(l=>l.tgl_pinjam>=f&&l.tgl_pinjam<=t);}
+function lapVisits(){const [f,t]=lapRange();return (S.d.pengunjung||[]).filter(v=>v.tanggal>=f&&v.tanggal<=t);}
+function lapStats(){
+ const [f,t]=lapRange(),L=lapLoans(),V=lapVisits();
+ const cnt=key=>{const c={};L.forEach(l=>c[l[key]]=(c[l[key]]||0)+1);return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,5);};
+ return {f,t,L,V,
+  kembali:S.d.peminjaman.filter(l=>l.tgl_kembali&&l.tgl_kembali>=f&&l.tgl_kembali<=t).length,
+  telat:L.filter(l=>loanInfo(l).late>0||(l.tgl_kembali&&Number(l.denda)>0)).length,
+  denda:sum(L,l=>loanInfo(l).denda),
+  topBuku:cnt('buku_id'),topAng:cnt('anggota_id'),
+  vAng:V.filter(v=>v.anggota_id).length,vTamu:V.filter(v=>!v.anggota_id).length,
+  vHari:new Set(V.map(v=>v.tanggal)).size};
+}
+ADMIN.laporan=()=>{
+ const s=lapStats(),{f,t,L}=s;
+ const days=[];let d=f;while(d<=t&&days.length<400){days.push(d);d=addDays(d,1);}
+ const shown=days.slice(-31),per=shown.map(x=>L.filter(l=>l.tgl_pinjam===x).length),mx=Math.max(1,...per);
+ const bT=id=>(S.d.buku.find(b=>b.id===id)||{}).judul||'(dihapus)',aT=id=>(S.d.anggota.find(a=>a.id===id)||{}).nama||'(dihapus)';
+ return `${ph('Laporan',`<div class="acts"><button class="pill" data-act="printLaporan">${ic('printer',18)} Cetak Laporan</button><button class="pill" data-act="exportCsv">${ic('download',18)} Ekspor CSV</button></div>`)}
+ <form id="frmLaporan" class="card" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px">
+  <label class="fld"><span>Dari tanggal</span><input type="date" name="from" value="${f}" required></label>
+  <label class="fld"><span>Sampai tanggal</span><input type="date" name="to" value="${t}" required></label>
+  <button class="btn" type="submit">Terapkan</button></form>
+ <div class="stats">
+  ${statCard('c-green','Total Peminjaman',L.length,'pada periode terpilih','green')}
+  ${statCard('c-purple','Dikembalikan',s.kembali,'pada periode terpilih','purple')}
+  ${statCard('c-coral','Total Denda',rupiah(s.denda),`${s.telat} pinjaman terlambat`,'coral')}
+ </div>
+ <div class="h3">Peminjaman per hari${days.length>31?' (31 hari terakhir)':''}</div>
+ <div class="card"><div class="bars">${shown.map((x,i)=>`<div title="${fmtD(x)}: ${per[i]}"><span>${per[i]||''}</span><i style="height:${per[i]/mx*100}%"></i><span>${+x.slice(8)}</span></div>`).join('')}</div></div>
+ <div class="grid2" style="margin-top:20px">
+  <div class="card"><div class="h3" style="margin-top:0">Buku terpopuler</div><div class="rank">${s.topBuku.map(([id,n],i)=>`<div><em>${i+1}</em><span>${esc(bT(id))}</span><b>${n}x</b></div>`).join('')||'<p style="color:#6B7280">Belum ada data</p>'}</div></div>
+  <div class="card"><div class="h3" style="margin-top:0">Anggota teraktif</div><div class="rank">${s.topAng.map(([id,n],i)=>`<div><em>${i+1}</em><span>${esc(aT(id))}</span><b>${n}x</b></div>`).join('')||'<p style="color:#6B7280">Belum ada data</p>'}</div></div>
+ </div>
+ <div class="card" style="margin-top:20px"><div class="h3" style="margin-top:0">Pengunjung (membaca di tempat)</div><dl class="kv"><dt>Total kunjungan</dt><dd>${s.V.length}</dd><dt>Anggota</dt><dd>${s.vAng}</dd><dt>Tamu</dt><dd>${s.vTamu}</dd><dt>Hari ada kunjungan</dt><dd>${s.vHari}</dd><dt>Rata-rata per hari</dt><dd>${s.vHari?(s.V.length/s.vHari).toFixed(1):'0'}</dd></dl></div>`;
+};
+function printLaporan(){
+ const s=lapStats();
+ const bT=id=>(S.d.buku.find(b=>b.id===id)||{}).judul||'(dihapus)',aT=id=>(S.d.anggota.find(a=>a.id===id)||{}).nama||'(dihapus)';
+ const loanRows=[...s.L].sort((a,b)=>a.tgl_pinjam.localeCompare(b.tgl_pinjam)).map((l,i)=>{const a=S.d.anggota.find(x=>x.id===l.anggota_id)||{},inf=loanInfo(l);return `<tr><td class="c">${i+1}</td><td>${fmtD(l.tgl_pinjam)}</td><td>${esc(a.nama||'(dihapus)')}<br><small>${esc(a.no_anggota||'')}</small></td><td>${esc(bT(l.buku_id))}</td><td>${fmtD(l.tgl_jatuh_tempo)}</td><td>${l.tgl_kembali?fmtD(l.tgl_kembali):'-'}</td><td>${esc(inf.label)}</td><td class="r">${inf.denda?rupiah(inf.denda):'-'}</td></tr>`;}).join('');
+ const days={};s.V.forEach(v=>{const o=days[v.tanggal]=days[v.tanggal]||{a:0,t:0};if(v.anggota_id)o.a++;else o.t++;});
+ const visitRows=Object.keys(days).sort().map((d,i)=>`<tr><td class="c">${i+1}</td><td>${fmtLong(d)}</td><td class="c">${days[d].a}</td><td class="c">${days[d].t}</td><td class="c">${days[d].a+days[d].t}</td></tr>`).join('');
+ const rank=(arr,fn)=>arr.map(([id,n],i)=>`<tr><td class="c">${i+1}</td><td>${esc(fn(id))}</td><td class="c">${n}</td></tr>`).join('')||'<tr><td colspan="3" class="c">Tidak ada data</td></tr>';
+ const sm=(k,v)=>`<tr><td>${k}</td><td>${v}</td></tr>`;
+ openPrint('Laporan Perpustakaan',`${kopHtml()}<h1 class="jd">Laporan Perpustakaan</h1><p class="sub">Periode ${fmtLong(s.f)} s.d. ${fmtLong(s.t)}</p>
+ <h4>A. Ringkasan</h4><table class="sum"><tbody>${sm('Total peminjaman',s.L.length)}${sm('Buku dikembalikan',s.kembali)}${sm('Peminjaman terlambat',s.telat)}${sm('Total denda',rupiah(s.denda))}${sm('Total kunjungan (membaca di tempat)',`${s.V.length} (anggota ${s.vAng}, tamu ${s.vTamu})`)}</tbody></table>
+ <h4>B. Daftar Peminjaman</h4>${s.L.length?`<table><thead><tr><th class="c">No</th><th>Tgl Pinjam</th><th>Anggota</th><th>Judul Buku</th><th>Jatuh Tempo</th><th>Kembali</th><th>Status</th><th class="r">Denda</th></tr></thead><tbody>${loanRows}</tbody></table>`:'<p>Tidak ada peminjaman pada periode ini.</p>'}
+ <h4>C. Buku Terpopuler</h4><table><thead><tr><th class="c">No</th><th>Judul</th><th class="c">Dipinjam</th></tr></thead><tbody>${rank(s.topBuku,bT)}</tbody></table>
+ <h4>D. Anggota Teraktif</h4><table><thead><tr><th class="c">No</th><th>Nama</th><th class="c">Peminjaman</th></tr></thead><tbody>${rank(s.topAng,aT)}</tbody></table>
+ <h4>E. Rekap Pengunjung Harian</h4>${visitRows?`<table><thead><tr><th class="c">No</th><th>Tanggal</th><th class="c">Anggota</th><th class="c">Tamu</th><th class="c">Jumlah</th></tr></thead><tbody>${visitRows}</tbody></table>`:'<p>Tidak ada data kunjungan pada periode ini.</p>'}
+ ${ttdHtml()}`);
+}
+ADMIN.pengaturan=()=>{
+ const P=S.settings,logo=safeImg(P.logo_url),v=k=>esc(P[k]||'');
+ return `${ph('Pengaturan')}
+ <form id="frmPeng" class="card form-grid" style="max-width:820px">
+  <div class="h3 full" style="margin:0">Identitas Sekolah &amp; Aplikasi</div>
+  <label class="fld"><span>Nama aplikasi *</span><input name="nama_aplikasi" value="${v('nama_aplikasi')}" required></label>
+  <label class="fld"><span>Nama sekolah</span><input name="nama_sekolah" value="${v('nama_sekolah')}" placeholder="Contoh: SMP Negeri 1 ..."></label>
+  <div class="fld full"><span>Logo</span><div class="logo-up"><div class="logo-prev" id="logoPrev">${logo?`<img src="${esc(logo)}" alt="">`:ic('book',26)}</div><div class="acts"><label class="btn ghost sm" style="cursor:pointer">${ic('upload',14)} Unggah logo<input type="file" id="logoFile" accept="image/*" hidden></label><button type="button" class="btn ghost sm" data-act="logoClear">Hapus logo</button></div></div>
+   <input type="hidden" name="logo_url" id="logoVal" value="${v('logo_url')}">
+   <input id="logoUrl" placeholder="atau tempel URL gambar logo (https://...)" value="${P.logo_url&&!String(P.logo_url).startsWith('data:')?v('logo_url'):''}" aria-label="URL logo"><small>Gambar yang diunggah otomatis diperkecil (maks. 256 px).</small></div>
+  <label class="fld full"><span>Alamat</span><textarea name="alamat" rows="2">${v('alamat')}</textarea></label>
+  <label class="fld"><span>Kepala sekolah</span><input name="kepala_sekolah" value="${v('kepala_sekolah')}"></label>
+  <label class="fld"><span>NIP kepala sekolah</span><input name="nip_kepala_sekolah" value="${v('nip_kepala_sekolah')}"></label>
+  <label class="fld"><span>Kepala perpustakaan</span><input name="kepala_perpus" value="${v('kepala_perpus')}"></label>
+  <label class="fld"><span>NIP kepala perpustakaan</span><input name="nip_kepala_perpus" value="${v('nip_kepala_perpus')}"></label>
+  <div class="h3 full" style="margin:10px 0 0">Aturan Sirkulasi</div>
+  <label class="fld"><span>Lama pinjam (hari)</span><input type="number" min="1" name="lama_pinjam_hari" value="${P.lama_pinjam_hari}" required></label>
+  <label class="fld"><span>Denda per hari (Rp)</span><input type="number" min="0" name="denda_per_hari" value="${P.denda_per_hari}" required></label>
+  <label class="fld"><span>Maks. buku dipinjam per anggota</span><input type="number" min="1" name="maks_pinjam" value="${P.maks_pinjam}" required></label>
+  <label class="fld"><span>Maks. perpanjangan</span><input type="number" min="0" name="maks_perpanjang" value="${P.maks_perpanjang}" required></label>
+  <div class="full m-act" style="justify-content:space-between;align-items:center"><small style="color:#6B7280">Mode saat ini: <b>${IS_PREVIEW?'PREVIEW (data dummy di memori)':'LIVE (Supabase)'}</b></small><button class="btn" type="submit">Simpan Pengaturan</button></div>
+ </form>`;
+};
+
+/* ===== HALAMAN ANGGOTA ===== */
+const MEMBER={};
+MEMBER.beranda=()=>{
+ const P=S.settings,aktif=S.d.loans.filter(l=>!l.tgl_kembali),late=aktif.filter(l=>loanInfo(l).late>0);
+ const denda=sum(late,l=>loanInfo(l).denda);
+ const favBooks=S.d.buku.filter(b=>S.d.favorit.includes(b.id));
+ const favCats=new Set(favBooks.map(b=>b.kategori_id));
+ const reko=[...S.d.buku].sort((a,b)=>(favCats.has(b.kategori_id)?1:0)-(favCats.has(a.kategori_id)?1:0)||b.stok_tersedia-a.stok_tersedia).slice(0,10);
+ return `${ph(`Halo, ${esc(S.user.nama.split(' ')[0])}`,`<button class="pill" data-act="nav" data-p="katalog">${ic('search',18)} Cari Buku</button>`)}
+ <div class="stats">
+  ${statCard('c-green','Sedang Dipinjam',`${aktif.length}/${P.maks_pinjam}`,'kuota pinjaman terpakai','green',aktif.length/P.maks_pinjam*100)}
+  ${statCard('c-purple','Buku Favorit',S.d.favorit.length,'tersimpan di daftar favorit','purple')}
+  ${statCard('c-coral','Denda Berjalan',rupiah(denda),`${late.length} pinjaman terlambat`,'coral')}
+ </div>
+ <div class="h2">Pinjaman <span>aktif</span></div>
+ ${aktif.length?`<div class="plist">${aktif.map(l=>{const i=loanInfo(l);return `<div class="prow">${cover(l.buku,'mini')}<div class="pl-l"><small>Jatuh tempo ${fmtD(l.tgl_jatuh_tempo)}</small><b>${esc(l.buku.judul)}</b></div><span class="bd ${i.cls}">${i.label}</span></div>`;}).join('')}</div>`:`<div class="empty"><p>Kamu belum meminjam buku. Yuk jelajahi katalog!</p></div>`}
+ <div class="h2">Rekomendasi <span>untuk kamu</span></div>
+ <div class="hscroll">${reko.map(bookCard).join('')}</div>`;
+};
+MEMBER.katalog=()=>{
+ const list=S.d.buku.filter(b=>(!S.f.kat||b.kategori_id===S.f.kat)&&match(`${b.judul} ${b.penulis} ${katName(b.kategori_id)}`));
+ return `${ph('Katalog Buku')}${chips()}${list.length?`<div class="bgrid">${list.map(bookCard).join('')}</div>`:'<div class="empty"><p>Buku tidak ditemukan</p></div>'}`;
+};
+MEMBER.pinjaman=()=>{
+ const T=S.f.tab,P=S.settings;
+ const list=S.d.loans.filter(l=>T==='aktif'?!l.tgl_kembali:!!l.tgl_kembali);
+ const tab=(k,l)=>`<button class="${T===k?'on':''}" data-act="ftab" data-k="tab" data-v="${k}">${l}</button>`;
+ return `${ph('Pinjaman Saya')}<div class="tabs">${tab('aktif','Aktif')}${tab('riwayat','Riwayat')}</div>
+ ${list.length?`<div class="plist">${list.map(l=>{const i=loanInfo(l);const can=!l.tgl_kembali&&i.late===0&&(l.perpanjangan||0)<P.maks_perpanjang;
+  return `<div class="prow block">${cover(l.buku,'mini')}<div class="pl-l"><small>Dipinjam ${fmtD(l.tgl_pinjam)} · Jatuh tempo ${fmtD(l.tgl_jatuh_tempo)}${l.tgl_kembali?' · Kembali '+fmtD(l.tgl_kembali):''}</small><b>${esc(l.buku.judul)}</b><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="bd ${i.cls}">${i.label}</span>${i.denda?`<span class="bd bad">Denda ${rupiah(i.denda)}</span>`:''}${l.perpanjangan?`<span class="bd gray">Diperpanjang ${l.perpanjangan}x</span>`:''}</div></div>${!l.tgl_kembali?`<button class="btn sm ${can?'':'ghost'}" data-act="mExtend" data-id="${l.id}" ${can?'':'disabled'}>Perpanjang</button>`:''}</div>`;}).join('')}</div>`:`<div class="empty"><p>${T==='aktif'?'Tidak ada pinjaman aktif':'Belum ada riwayat pinjaman'}</p></div>`}
+ <p style="margin-top:16px;font-size:12px;color:#6B7280">Pengembalian buku fisik dilakukan di meja sirkulasi. Denda keterlambatan ${rupiah(P.denda_per_hari)} per hari.</p>`;
+};
+MEMBER.favorit=()=>{
+ const favs=S.d.buku.filter(b=>S.d.favorit.includes(b.id));
+ return `${ph('Favorit & Reservasi')}
+ <div class="h3" style="margin-top:0">Buku favorit</div>
+ ${favs.length?`<div class="bgrid">${favs.map(bookCard).join('')}</div>`:'<div class="empty"><p>Belum ada favorit. Tekan ikon hati pada buku untuk menyimpannya.</p></div>'}
+ <div class="h3">Reservasi saya</div>
+ ${S.d.reservasi.length?`<div class="plist">${S.d.reservasi.map(r=>{const [l,c]=RES_LBL[r.status]||['-','gray'];return `<div class="prow">${cover(r.buku,'mini')}<div class="pl-l"><small>Direservasi ${fmtD(r.tgl_reservasi)}</small><b>${esc(r.buku.judul)}</b></div><span class="bd ${c}">${l}</span>${['menunggu','siap'].includes(r.status)?`<button class="ib red" data-act="mResCancel" data-id="${r.id}" aria-label="Batalkan">${ic('x',16)}</button>`:''}</div>`;}).join('')}</div>`:'<div class="empty"><p>Belum ada reservasi</p></div>'}`;
+};
+MEMBER.profil=()=>{
+ const u=S.user;
+ return `${ph('Profil')}
+ <div class="grid2">
+  <div class="card"><div class="h3" style="margin-top:0">Kartu anggota</div><div class="card-wrap">${cardHtml(u)}</div><button class="btn ghost block" data-act="kartuSaya">${ic('printer',16)} Cetak kartu</button>
+   <dl class="kv" style="margin-top:18px"><dt>Username</dt><dd>${esc(u.username)}</dd><dt>Email</dt><dd>${esc(u.email||'-')}</dd><dt>Telepon</dt><dd>${esc(u.telepon||'-')}</dd></dl>
+   <button class="btn ghost" style="margin-top:20px" data-act="logout">${ic('logout',16)} Keluar</button></div>
+  <form id="frmPw" class="card" style="display:flex;flex-direction:column;gap:14px"><div class="h3" style="margin:0">Ubah password</div>
+   <label class="fld"><span>Password lama</span><input type="password" name="old" required autocomplete="current-password"></label>
+   <label class="fld"><span>Password baru (min. 6 karakter)</span><input type="password" name="nw" minlength="6" required autocomplete="new-password"></label>
+   <label class="fld"><span>Ulangi password baru</span><input type="password" name="nw2" minlength="6" required autocomplete="new-password"></label>
+   <button class="btn" type="submit">${ic('key',16)} Simpan Password</button></form>
+ </div>`;
+};
+
+/* =====================================================================
+   DETAIL BUKU, FORM, NOTIFIKASI
+   ===================================================================== */
+function bookDetail(id){
+ const b=S.d.buku.find(x=>x.id===id);if(!b)return;
+ const eb=safeUrl(b.file_url);
+ let acts='';
+ if(S.role==='anggota'){
+  const fav=S.d.favorit.includes(id),res=S.d.reservasi.some(r=>r.buku_id===id&&['menunggu','siap'].includes(r.status));
+  acts=`${eb?`<a class="btn" href="${esc(eb)}" target="_blank" rel="noopener noreferrer">${ic('ext',16)} Baca E-book</a>`:''}<button class="btn ${eb?'ghost':''}" data-act="reserve" data-id="${id}" ${res?'disabled':''}>${ic('bookmark',16)} ${res?'Sudah direservasi':'Reservasi Buku Fisik'}</button><button class="btn ghost" data-act="favToggle" data-id="${id}" data-from="modal">${ic('heart',16)} ${fav?'Hapus Favorit':'Favorit'}</button>`;
+ }else{
+  acts=`${eb?`<a class="btn ghost" href="${esc(eb)}" target="_blank" rel="noopener noreferrer">${ic('ext',16)} Buka E-book</a>`:''}${b.stok_tersedia>0?`<button class="btn" data-act="pinjamForm" data-buku="${id}">${ic('repeat',16)} Pinjamkan</button>`:''}<button class="btn ghost" data-act="bukuForm" data-id="${id}">${ic('edit',16)} Ubah</button>`;
+ }
+ openModal(`<div class="bd-wrap"><div>${cover(b,'lg')}${b.kode_buku?`<div class="bcode">${barcodeSvg(b.kode_buku)}<small>${esc(b.kode_buku)}</small></div>`:''}</div><div class="bd-info"><span class="bd info">${esc(katName(b.kategori_id))}</span><h3 style="margin-top:8px">${esc(b.judul)}</h3><div class="au">${esc(b.penulis)}</div>${stokBd(b)} <small style="color:#6B7280">dari ${b.stok_total} eksemplar</small>
+ <p>${esc(b.sinopsis||'Belum ada sinopsis.')}</p><dl class="kv" style="grid-template-columns:90px 1fr"><dt>Kode buku</dt><dd>${esc(b.kode_buku||'-')}</dd><dt>Penerbit</dt><dd>${esc(b.penerbit||'-')}</dd><dt>Tahun</dt><dd>${esc(b.tahun||'-')}</dd><dt>ISBN</dt><dd>${esc(b.isbn||'-')}</dd>${S.role==='admin'?`<dt>Sumber</dt><dd>${esc(sumberName(b.sumber_id))}</dd>`:''}<dt>E-book</dt><dd>${eb?'Tersedia':'Tidak tersedia'}</dd></dl>
+ <div class="m-act" style="justify-content:flex-start;margin-top:18px">${acts}<button class="btn ghost" data-act="closeModal">Tutup</button></div></div></div>`,true);
+}
+const nextKode=()=>'BK-'+String(Math.max(0,...S.d.buku.map(b=>{const m=/^BK-(\d+)$/i.exec(b.kode_buku||'');return m?parseInt(m[1]):0;}))+1).padStart(4,'0');
+function bukuForm(id){
+ const b=id?S.d.buku.find(x=>x.id===id):null;
+ openForm({title:b?'Ubah Buku':'Tambah Buku',wide:true,values:b||{stok_total:1,kode_buku:nextKode()},submitLabel:b?'Simpan Perubahan':'Tambah Buku',
+  fields:[
+   {name:'kode_buku',label:'Kode buku',scanTo:true,full:true,placeholder:'Scan barcode / QR buku, atau ketik',hint:'Satu kode per judul. Dipakai untuk scan saat sirkulasi. Kosongkan jika tidak dipakai.'},
+   {name:'judul',label:'Judul',required:true,full:true},{name:'penulis',label:'Penulis',required:true},{name:'penerbit',label:'Penerbit'},
+   {name:'kategori_id',label:'Kategori',type:'select',options:[{v:'',t:'Tanpa kategori'},...S.d.kategori.map(k=>({v:k.id,t:k.nama}))]},
+   {name:'sumber_id',label:'Sumber buku',type:'select',options:[{v:'',t:'Tidak diketahui'},...S.d.sumber_buku.map(s=>({v:s.id,t:s.nama}))]},
+   {name:'tahun',label:'Tahun terbit',type:'number',min:0},{name:'isbn',label:'ISBN'},{name:'stok_total',label:'Jumlah eksemplar',type:'number',min:0,required:true},
+   {name:'cover_url',label:'URL sampul (opsional)',full:true,placeholder:'https://...'},{name:'file_url',label:'URL e-book PDF (opsional)',full:true,placeholder:'https://...',hint:'Tautan PDF / Google Drive. Kosongkan jika hanya buku fisik.'},
+   {name:'sinopsis',label:'Sinopsis',type:'textarea',full:true}
+  ],
+  onSubmit:async fd=>{
+   const total=Math.max(0,parseInt(fd.stok_total)||0);
+   const kode=fd.kode_buku.trim();
+   if(kode&&S.d.buku.some(x=>String(x.kode_buku||'').toLowerCase()===kode.toLowerCase()&&x.id!==id))throw new Error('Kode buku sudah dipakai buku lain');
+   const row={kode_buku:kode||null,judul:fd.judul.trim(),penulis:fd.penulis.trim(),penerbit:fd.penerbit.trim()||null,tahun:fd.tahun?Number(fd.tahun):null,isbn:fd.isbn.trim()||null,kategori_id:fd.kategori_id||null,sumber_id:fd.sumber_id||null,sinopsis:fd.sinopsis.trim()||null,cover_url:fd.cover_url.trim()||null,file_url:fd.file_url.trim()||null};
+   if(row.cover_url&&!safeUrl(row.cover_url))throw new Error('URL sampul harus diawali http:// atau https://');
+   if(row.file_url&&!safeUrl(row.file_url))throw new Error('URL e-book harus diawali http:// atau https://');
+   if(b){const out=b.stok_total-b.stok_tersedia;if(total<out)throw new Error(`Jumlah eksemplar tidak boleh kurang dari ${out} (sedang dipinjam)`);row.stok_total=total;row.stok_tersedia=total-out;await A.upd('buku',b.id,row);}
+   else{row.stok_total=total;row.stok_tersedia=total;await A.ins('buku',row);}
+   await refresh();toast(b?'Buku diperbarui':'Buku ditambahkan');
+  }});
+}
+function katForm(id){
+ const k=id?S.d.kategori.find(x=>x.id===id):null;
+ openForm({title:k?'Ubah Kategori':'Tambah Kategori',values:k||{warna:'#4F63E6'},fields:[{name:'nama',label:'Nama kategori',required:true,full:true},{name:'warna',label:'Warna penanda',type:'color',full:true}],
+  onSubmit:async fd=>{
+   const nama=fd.nama.trim();if(S.d.kategori.some(x=>x.nama.toLowerCase()===nama.toLowerCase()&&x.id!==id))throw new Error('Nama kategori sudah ada');
+   if(k)await A.upd('kategori',k.id,{nama,warna:fd.warna});else await A.ins('kategori',{nama,warna:fd.warna});
+   await refresh();toast('Kategori disimpan');
+  }});
+}
+function sumberForm(id){
+ const s=id?S.d.sumber_buku.find(x=>x.id===id):null;
+ openForm({title:s?'Ubah Sumber Buku':'Tambah Sumber Buku',values:s||{},fields:[{name:'nama',label:'Nama sumber',required:true,full:true,placeholder:'Contoh: Dana BOS, Hibah, Pembelian'}],
+  onSubmit:async fd=>{
+   const nama=fd.nama.trim();if(S.d.sumber_buku.some(x=>x.nama.toLowerCase()===nama.toLowerCase()&&x.id!==id))throw new Error('Sumber buku sudah ada');
+   if(s)await A.upd('sumber_buku',s.id,{nama});else await A.ins('sumber_buku',{nama});
+   await refresh();toast('Sumber buku disimpan');
+  }});
+}
+function agtForm(id){
+ const a=id?S.d.anggota.find(x=>x.id===id):null;
+ const nextNo='AGT-'+String(Math.max(0,...S.d.anggota.map(x=>parseInt(String(x.no_anggota).replace(/\D/g,''))||0))+1).padStart(4,'0');
+ openForm({title:a?'Ubah Anggota':'Tambah Anggota',values:a?{...a,password:''}:{no_anggota:nextNo,status:'aktif'},submitLabel:a?'Simpan Perubahan':'Tambah Anggota',
+  fields:[
+   {name:'nama',label:'Nama lengkap',required:true,full:true},{name:'no_anggota',label:'No. anggota',required:true,hint:'Tercetak sebagai barcode pada kartu'},{name:'kelas',label:'Kelas / Jabatan',placeholder:'Contoh: VII A, Guru'},
+   {name:'username',label:'Username',required:true,hint:'Huruf kecil, angka, titik, strip'},
+   {name:'password',label:a?'Password baru':'Password',type:'password',required:!a,hint:a?'Kosongkan jika tidak diubah (wajib diisi bila username diganti)':'Minimal 6 karakter'},
+   {name:'email',label:'Email',type:'email'},{name:'telepon',label:'Telepon'},
+   {name:'status',label:'Status',type:'select',full:true,options:[{v:'aktif',t:'Aktif'},{v:'nonaktif',t:'Nonaktif'}]}
+  ],
+  onSubmit:async fd=>{
+   const username=fd.username.trim().toLowerCase();
+   if(!/^[a-z0-9._-]{3,}$/.test(username))throw new Error('Username minimal 3 karakter (huruf kecil, angka, titik, strip)');
+   if(S.d.anggota.some(x=>x.username===username&&x.id!==id))throw new Error('Username sudah dipakai');
+   const no=fd.no_anggota.trim();if(S.d.anggota.some(x=>x.no_anggota===no&&x.id!==id))throw new Error('No. anggota sudah dipakai');
+   const row={no_anggota:no,nama:fd.nama.trim(),kelas:fd.kelas.trim()||null,username,email:fd.email.trim()||null,telepon:fd.telepon.trim()||null,status:fd.status};
+   if(fd.password){if(fd.password.length<6)throw new Error('Password minimal 6 karakter');row.password_hash=await hashPw(username,fd.password);}
+   else if(!a)throw new Error('Password wajib diisi');
+   else if(a.username!==username)throw new Error('Username diganti: isi juga password baru');
+   if(a)await A.upd('anggota',a.id,row);else await A.ins('anggota',row);
+   await refresh();toast('Anggota disimpan');
+  }});
+}
+function pinjamForm(opt={}){
+ const ang=S.d.anggota.filter(a=>a.status==='aktif'),bk=S.d.buku.filter(b=>b.stok_tersedia>0);
+ if(!ang.length)return toast('Belum ada anggota aktif','err');
+ if(!bk.length)return toast('Tidak ada buku yang tersedia','err');
+ openForm({title:'Pinjamkan Buku',submitLabel:'Proses Peminjaman',values:{anggota_id:opt.anggota||'',buku_id:opt.buku||'',tgl:todayStr()},
+  fields:[
+   {type:'scan',kind:'anggota',target:'anggota_id',label:'Scan kartu anggota',full:true,placeholder:'Scan kartu / ketik no. anggota, lalu Enter'},
+   {name:'anggota_id',label:'Anggota',type:'select',required:true,full:true,options:ang.map(a=>({v:a.id,t:`${a.nama} (${a.no_anggota})`}))},
+   {type:'scan',kind:'buku',target:'buku_id',label:'Scan kode buku',full:true,placeholder:'Scan / ketik kode buku, lalu Enter'},
+   {name:'buku_id',label:'Buku',type:'select',required:true,full:true,options:bk.map(b=>({v:b.id,t:`${b.judul} — sisa ${b.stok_tersedia}`}))},
+   {name:'tgl',label:'Tanggal pinjam',type:'date',required:true,hint:`Jatuh tempo otomatis ${S.settings.lama_pinjam_hari} hari setelahnya`}
+  ],
+  onSubmit:async fd=>{await doPinjam(fd.anggota_id,fd.buku_id,fd.tgl);await refresh();toast('Peminjaman dicatat');}});
+}
+function pengForm(){
+ const ang=S.d.anggota.filter(a=>a.status==='aktif');
+ openForm({title:'Catat Kunjungan',submitLabel:'Catat Masuk',values:{keperluan:'Membaca di tempat'},
+  fields:[
+   {type:'scan',kind:'anggota',target:'anggota_id',label:'Scan kartu anggota',full:true,placeholder:'Scan kartu / ketik no. anggota, lalu Enter'},
+   {name:'anggota_id',label:'Anggota',type:'select',full:true,options:[{v:'',t:'— Tamu / bukan anggota —'},...ang.map(a=>({v:a.id,t:`${a.nama} (${a.no_anggota})`}))]},
+   {name:'nama_tamu',label:'Nama tamu (jika bukan anggota)'},{name:'kelas_tamu',label:'Kelas / Instansi'},
+   {type:'scan',kind:'buku',target:'buku_id',label:'Scan kode buku yang dibaca (opsional)',full:true,placeholder:'Scan / ketik kode buku, lalu Enter'},
+   {name:'buku_id',label:'Buku yang dibaca',type:'select',full:true,options:[{v:'',t:'— Tidak dicatat —'},...S.d.buku.map(b=>({v:b.id,t:`${b.judul}${b.kode_buku?' ('+b.kode_buku+')':''}`}))]},
+   {name:'keperluan',label:'Keperluan',type:'select',full:true,options:['Membaca di tempat','Mengerjakan tugas','Mencari referensi','Lainnya'].map(x=>({v:x,t:x}))}
+  ],
+  onSubmit:async fd=>{
+   const a=fd.anggota_id?S.d.anggota.find(x=>x.id===fd.anggota_id):null;
+   let nama,kelas;
+   if(a){
+    if(S.d.pengunjung.some(v=>v.anggota_id===a.id&&v.tanggal===todayStr()&&!v.jam_keluar))throw new Error(`${a.nama} sudah tercatat masuk dan belum keluar`);
+    nama=a.nama;kelas=a.kelas||null;
+   }else{
+    nama=(fd.nama_tamu||'').trim();if(!nama)throw new Error('Pilih anggota atau isi nama tamu');
+    kelas=(fd.kelas_tamu||'').trim()||null;
+   }
+   await A.ins('pengunjung',{anggota_id:a?a.id:null,nama,kelas,buku_id:fd.buku_id||null,keperluan:fd.keperluan,tanggal:todayStr(),jam_masuk:new Date().toISOString(),jam_keluar:null});
+   S.f.tgl=todayStr();await refresh();toast(`${nama} tercatat masuk`);
+  }});
+}
+
+/* ===== PENCARIAN KODE & SCANNER ===== */
+function resolveMember(code){
+ const c=String(code).trim(),l=c.toLowerCase();
+ return S.d.anggota.find(a=>String(a.no_anggota).toLowerCase()===l||a.username===l||a.id===c);
+}
+function resolveBook(code){
+ const c=String(code).trim(),l=c.toLowerCase(),dg=l.replace(/[^0-9x]/g,'');
+ return S.d.buku.find(b=>String(b.kode_buku||'').toLowerCase()===l||b.id===c||(dg.length>=10&&String(b.isbn||'').toLowerCase().replace(/[^0-9x]/g,'')===dg));
+}
+function applyScan(kind,code,ctx={}){
+ const form=$('#frmModal');if(!form)return;
+ code=String(code||'').trim();if(!code)return;
+ const hint=$(`[data-for="${kind}"]`,form),inp=$(`[data-scan="${kind}"]`,form);
+ const setHint=(t,ok)=>{if(hint){hint.textContent=t;hint.style.color=ok?'var(--ok)':'var(--bad)';}};
+ if(kind==='kode'){const el=form.elements[ctx.fill];if(el){el.value=code;el.dispatchEvent(new Event('input',{bubbles:true}));}return;}
+ if(inp)inp.value=code;
+ const sel=form.elements[ctx.target];if(!sel)return;
+ let item,label;
+ if(kind==='anggota'){
+  item=resolveMember(code);
+  if(!item){setHint('Anggota tidak ditemukan: '+code,false);return toast('Anggota tidak ditemukan','err');}
+  if(item.status!=='aktif'){setHint(`${item.nama} berstatus nonaktif`,false);return toast('Anggota nonaktif','err');}
+  label=`${item.nama} (${item.no_anggota})`;
+ }else{
+  item=resolveBook(code);
+  if(!item){setHint('Buku tidak ditemukan: '+code,false);return toast('Buku tidak ditemukan','err');}
+  label=item.judul;
+ }
+ if(![...sel.options].some(o=>o.value===item.id)){setHint(`${label} tidak bisa dipilih (stok habis?)`,false);return toast(kind==='buku'?`Stok "${item.judul}" habis`:'Tidak bisa dipilih','err');}
+ sel.value=item.id;setHint('✓ '+label,true);
+ const next=$$('[data-scan]',form).find(i=>i.dataset.scan!==kind&&!i.value);
+ if(next)next.focus();
+}
+let SCAN=null;
+function closeScanner(){
+ const s=SCAN;SCAN=null;
+ if(s)s.stop.forEach(f=>{try{f();}catch(_){}});
+ const o=$('#ov2');if(o){o.hidden=true;o.innerHTML='';}
+}
+const loadScript=src=>new Promise((res,rej)=>{
+ if(window.Html5Qrcode)return res();
+ const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Pustaka scanner gagal dimuat (periksa koneksi internet)'));document.head.appendChild(s);
+});
+async function openScanner(title,cb){
+ closeScanner();
+ const o=$('#ov2'),me={stop:[]};SCAN=me;
+ o.innerHTML=`<div class="modal scan" role="dialog" aria-modal="true"><h3 class="m-title">${esc(title)}</h3><p class="m-p" id="scMsg" style="margin:6px 0 12px">Menyiapkan kamera...</p><div class="scan-view" id="scView"><video id="scV" playsinline muted hidden></video><div id="scR" hidden></div><div class="scan-frame" id="scFrame"></div></div><form id="scManual" class="scan-manual"><input id="scIn" placeholder="Atau ketik / scan dengan alat scanner" autocomplete="off" aria-label="Kode"><button class="btn sm" type="submit">OK</button></form><div class="m-act" style="margin-top:14px"><button class="btn ghost" type="button" data-act="closeScan">Tutup</button></div></div>`;
+ o.hidden=false;
+ let done=false;
+ const msg=t=>{const m=$('#scMsg');if(m)m.textContent=t;};
+ const finish=txt=>{txt=String(txt||'').trim();if(done||!txt||SCAN!==me)return;done=true;closeScanner();cb(txt);};
+ $('#scManual').onsubmit=e=>{e.preventDefault();finish($('#scIn').value);};
+ if(window.innerWidth>900)setTimeout(()=>{const i=$('#scIn');if(i)i.focus();},60);
+ try{
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('Kamera tidak tersedia di browser atau koneksi ini (butuh HTTPS)');
+  if('BarcodeDetector' in window){
+   let formats=['qr_code','code_128','code_39','ean_13','ean_8','upc_a','upc_e','itf','codabar'];
+   try{const sup=await window.BarcodeDetector.getSupportedFormats();const f=formats.filter(x=>sup.includes(x));if(f.length)formats=f;}catch(_){}
+   const det=new window.BarcodeDetector({formats});
+   const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+   me.stop.push(()=>stream.getTracks().forEach(t=>t.stop()));
+   if(SCAN!==me){stream.getTracks().forEach(t=>t.stop());return;}
+   const v=$('#scV');v.hidden=false;v.srcObject=stream;await v.play();
+   msg('Arahkan kamera ke barcode atau QR code');
+   const timer=setInterval(async()=>{if(v.readyState<2||done)return;try{const r=await det.detect(v);if(r.length)finish(r[0].rawValue);}catch(_){}},250);
+   me.stop.push(()=>clearInterval(timer));
+  }else{
+   await loadScript(CDN_H5QR);
+   if(SCAN!==me)return;
+   $('#scR').hidden=false;$('#scFrame').hidden=true;
+   const h=new window.Html5Qrcode('scR');
+   const stopH=()=>{h.stop().then(()=>h.clear()).catch(()=>{});};
+   me.stop.push(stopH);
+   await h.start({facingMode:'environment'},{fps:10,qrbox:{width:260,height:160}},finish,()=>{});
+   if(SCAN!==me){stopH();return;}
+   msg('Arahkan kamera ke barcode atau QR code');
+  }
+ }catch(err){
+  console.warn('Scanner:',err);
+  if(SCAN!==me)return;
+  msg(err&&err.name==='NotAllowedError'?'Akses kamera ditolak. Izinkan kamera di browser, atau ketik kode secara manual.':`${(err&&err.message)||'Kamera tidak dapat dibuka'}. Anda tetap bisa mengetik kode atau memakai alat scanner.`);
+  const vw=$('#scView');if(vw)vw.hidden=true;
+ }
+}
+function returnLookup(code){
+ const b=resolveBook(code),m=b?null:resolveMember(code);
+ if(!b&&!m)return toast('Kode tidak dikenali: '+code,'err');
+ const loans=S.d.peminjaman.filter(l=>!l.tgl_kembali&&(b?l.buku_id===b.id:l.anggota_id===m.id));
+ if(!loans.length)return toast(b?`Tidak ada pinjaman aktif untuk "${b.judul}"`:`${m.nama} tidak memiliki pinjaman aktif`,'err');
+ if(loans.length===1)return ACT.kembali({id:loans[0].id});
+ openModal(`<h3 class="m-title">Pilih pinjaman</h3><div class="plist" style="margin-top:14px">${loans.map(l=>{const a=S.d.anggota.find(x=>x.id===l.anggota_id)||{nama:'(dihapus)'},bk=S.d.buku.find(x=>x.id===l.buku_id)||{judul:'(dihapus)'};return `<div class="prow"><div class="pl-l"><small>${esc(a.nama)} · jatuh tempo ${fmtD(l.tgl_jatuh_tempo)}</small><b>${esc(bk.judul)}</b></div><button class="btn sm" data-act="kembali" data-id="${l.id}">Kembalikan</button></div>`;}).join('')}</div><div class="m-act" style="margin-top:16px"><button class="btn ghost" data-act="closeModal">Tutup</button></div>`);
+}
+
+/* ===== CETAK ===== */
+function printBuku(){
+ const list=filteredBuku();
+ if(!list.length)return toast('Tidak ada buku untuk dicetak','err');
+ const rows=list.map((b,i)=>`<tr><td class="c">${i+1}</td><td>${esc(b.kode_buku||'-')}</td><td>${esc(b.judul)}</td><td>${esc(b.penulis)}</td><td>${esc(b.penerbit||'-')}${b.tahun?', '+b.tahun:''}</td><td>${esc(katName(b.kategori_id))}</td><td>${esc(sumberName(b.sumber_id))}</td><td class="c">${b.stok_total}</td><td class="c">${b.stok_tersedia}</td></tr>`).join('');
+ openPrint('Daftar Koleksi Buku',`${kopHtml()}<h1 class="jd">Daftar Koleksi Buku</h1><p class="sub">${esc(S.f.kat?katName(S.f.kat):'Semua kategori')}${S.q?` &middot; pencarian &quot;${esc(S.q)}&quot;`:''} &middot; ${list.length} judul &middot; ${sum(list,b=>b.stok_total)} eksemplar</p><table><thead><tr><th class="c">No</th><th>Kode</th><th>Judul</th><th>Penulis</th><th>Penerbit / Tahun</th><th>Kategori</th><th>Sumber</th><th class="c">Eks.</th><th class="c">Ada</th></tr></thead><tbody>${rows}</tbody></table>${ttdHtml()}`,{landscape:true});
+}
+function printLabel(){
+ const list=filteredBuku().filter(b=>b.kode_buku);
+ if(!list.length)return toast('Belum ada buku yang memiliki kode','err');
+ openPrint('Label Barcode Buku',`<div class="labels">${list.map(b=>`<div class="lb">${barcodeSvg(b.kode_buku)}<b>${esc(b.kode_buku)}</b><span>${esc(b.judul)}</span></div>`).join('')}</div>`);
+}
+function printKartu(list){
+ list=list.filter(Boolean);
+ if(!list.length)return toast('Tidak ada kartu untuk dicetak','err');
+ openPrint('Kartu Anggota',`<div class="cards">${list.map(cardHtml).join('')}</div>`);
+}
+function cardModal(id){
+ const a=S.d.anggota.find(x=>x.id===id);if(!a)return;
+ openModal(`<h3 class="m-title">Kartu Anggota</h3><div class="card-wrap" style="margin:12px 0">${cardHtml(a)}</div><div class="m-act"><button class="btn ghost" data-act="closeModal">Tutup</button><button class="btn" data-act="kartuPrint" data-id="${id}">${ic('printer',16)} Cetak</button></div>`);
+}
+function readLogo(file){
+ return new Promise((res,rej)=>{
+  if(file.size>5*1024*1024)return rej(new Error('Ukuran file maksimal 5 MB'));
+  const fr=new FileReader();
+  fr.onerror=()=>rej(new Error('Gagal membaca file'));
+  fr.onload=()=>{const img=new Image();
+   img.onerror=()=>rej(new Error('File bukan gambar yang valid'));
+   img.onload=()=>{const M=256,sc=Math.min(1,M/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*sc)),h=Math.max(1,Math.round(img.height*sc)),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/png'));};
+   img.src=fr.result;};
+  fr.readAsDataURL(file);
+ });
+}
+const setLogoPreview=v=>{const p=$('#logoPrev');if(p)p.innerHTML=v&&safeImg(v)?`<img src="${esc(v)}" alt="">`:ic('book',26);};
+
+function showNotifs(){
+ const n=getNotifs();
+ openModal(`<h3 class="m-title">Notifikasi</h3><div class="plist" style="margin-top:14px">${n.map(x=>`<div class="prow block" style="cursor:pointer" data-act="notifGo" data-p="${x.p}" data-tab="${x.tab||''}"><div class="pl-l"><span class="bd ${x.cls}">${esc(x.t)}</span><small style="margin-top:6px">${esc(x.s)}</small></div></div>`).join('')||'<div class="empty small"><p>Tidak ada notifikasi baru</p></div>'}</div><div class="m-act" style="margin-top:16px"><button class="btn ghost" data-act="closeModal">Tutup</button></div>`);
+}
+function exportCsv(){
+ const L=lapLoans();
+ const rows=[['Tgl Pinjam','Jatuh Tempo','Tgl Kembali','No Anggota','Nama','Judul Buku','Status','Denda']];
+ L.forEach(l=>{const a=S.d.anggota.find(x=>x.id===l.anggota_id)||{},b=S.d.buku.find(x=>x.id===l.buku_id)||{},i=loanInfo(l);rows.push([l.tgl_pinjam,l.tgl_jatuh_tempo,l.tgl_kembali||'',a.no_anggota||'',a.nama||'',b.judul||'',i.label,i.denda]);});
+ const csv='\ufeff'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download=`laporan-perpustakaan-${S.f.from}_${S.f.to}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ toast('Laporan diunduh');
+}
+
+/* =====================================================================
+   EVENT HANDLERS
+   ===================================================================== */
+const ACT={
+ scanFor(d){openScanner(d.kind==='anggota'?'Scan kartu anggota':'Scan kode buku',txt=>applyScan(d.kind,txt,{target:d.target,fill:d.fill}));},
+ scanReturn(){openScanner('Scan buku atau kartu anggota',returnLookup);},
+ closeScan(){closeScanner();},
+ printBuku(){printBuku();},
+ printLabel(){printLabel();},
+ printLaporan(){printLaporan();},
+ kartu(d){cardModal(d.id);},
+ kartuPrint(d){printKartu([S.d.anggota.find(a=>a.id===d.id)]);},
+ kartuAll(){printKartu(S.d.anggota.filter(a=>a.status==='aktif'&&match(`${a.nama} ${a.no_anggota} ${a.username} ${a.email||''} ${a.kelas||''}`)));},
+ kartuSaya(){printKartu([S.user]);},
+ sumberForm(d){sumberForm(d.id);},
+ async sumberDel(d){
+  const s=S.d.sumber_buku.find(x=>x.id===d.id),n=S.d.buku.filter(b=>b.sumber_id===d.id).length;
+  if(!await confirmBox(`Hapus sumber <b>${esc(s.nama)}</b>?${n?` ${n} buku akan menjadi tanpa sumber.`:''}`,'Ya, hapus'))return;
+  run(async()=>{await A.del('sumber_buku',d.id);await refresh();toast('Sumber buku dihapus');});
+ },
+ pengForm(){pengForm();},
+ pgToday(){S.f.tgl=todayStr();renderPage();},
+ pgOut(d){run(async()=>{await A.upd('pengunjung',d.id,{jam_keluar:new Date().toISOString()});await refresh();toast('Ditandai keluar');});},
+ async pgDel(d){if(!await confirmBox('Hapus catatan kunjungan ini?','Ya, hapus'))return;run(async()=>{await A.del('pengunjung',d.id);await refresh();toast('Catatan dihapus');});},
+ logoClear(){const v=$('#logoVal'),u=$('#logoUrl'),f=$('#logoFile');if(v)v.value='';if(u)u.value='';if(f)f.value='';setLogoPreview('');},
+ closeModal(){closeModal();},
+ cfYes(){const f=CF;CF=null;closeModal();if(f)f(true);},
+ cfNo(){closeModal();},
+ loginTab(d){S.loginRole=d.r;$$('#lg-seg button').forEach(b=>b.classList.toggle('on',b.dataset.r===d.r));setupLoginLabels();},
+ nav(d){closeModal();go(d.p);},
+ notifGo(d){closeModal();if(d.tab)S.f.sirk=d.tab;go(d.p);},
+ moreMenu(){openModal(`<h3 class="m-title">Menu Lainnya</h3><div class="plist" style="margin-top:14px">${NAV.admin.filter(x=>!MOBILE_MAIN.admin.includes(x[0])).map(([k,l,i])=>`<div class="prow" style="cursor:pointer" data-act="nav" data-p="${k}"><span class="avatar" style="background:#EEF1FF;color:var(--primary)">${ic(i,18)}</span><div class="pl-l"><b>${l}</b></div></div>`).join('')}<div class="prow" style="cursor:pointer" data-act="logout"><span class="avatar" style="background:#FFE4E8;color:var(--bad)">${ic('logout',18)}</span><div class="pl-l"><b>Keluar</b></div></div></div>`);},
+ bell(){showNotifs();},
+ userMenu(){openModal(`<div style="text-align:center"><span class="avatar" style="width:64px;height:64px;font-size:20px;margin:0 auto 10px">${esc(initials(S.user.nama))}</span><h3 class="m-title">${esc(S.user.nama)}</h3><p class="m-p" style="margin-bottom:14px">${S.role==='admin'?'Administrator · '+esc(S.user.email||''):'Anggota · '+esc(S.user.no_anggota||'')}</p></div><div class="m-act" style="justify-content:center"><button class="btn ghost" data-act="closeModal">Tutup</button><button class="btn danger" data-act="logout">${ic('logout',16)} Keluar</button></div>`);},
+ async logout(){closeModal();await doLogout();},
+ fab(){if(S.role==='admin')pinjamForm();else go('katalog');},
+ bookDetail(d){bookDetail(d.id);},
+ fkat(d){S.f.kat=d.id||'';renderPage();},
+ ftab(d){S.f[d.k]=d.v;renderPage();},
+ bukuForm(d){closeModal();bukuForm(d.id);},
+ async bukuDel(d){
+  const b=S.d.buku.find(x=>x.id===d.id);
+  if(S.d.peminjaman.some(l=>l.buku_id===d.id&&!l.tgl_kembali))return toast('Buku masih dipinjam, tidak bisa dihapus','err');
+  if(!await confirmBox(`Hapus buku <b>${esc(b.judul)}</b>? Riwayat peminjaman buku ini juga akan terhapus.`,'Ya, hapus'))return;
+  run(async()=>{await A.del('buku',d.id);await refresh();toast('Buku dihapus');});
+ },
+ katForm(d){katForm(d.id);},
+ async katDel(d){
+  const k=S.d.kategori.find(x=>x.id===d.id),n=S.d.buku.filter(b=>b.kategori_id===d.id).length;
+  if(!await confirmBox(`Hapus kategori <b>${esc(k.nama)}</b>?${n?` ${n} buku akan menjadi tanpa kategori.`:''}`,'Ya, hapus'))return;
+  run(async()=>{await A.del('kategori',d.id);await refresh();toast('Kategori dihapus');});
+ },
+ agtForm(d){agtForm(d.id);},
+ async agtDel(d){
+  const a=S.d.anggota.find(x=>x.id===d.id);
+  if(S.d.peminjaman.some(l=>l.anggota_id===d.id&&!l.tgl_kembali))return toast('Anggota masih memiliki pinjaman aktif','err');
+  if(!await confirmBox(`Hapus anggota <b>${esc(a.nama)}</b>? Riwayat peminjamannya ikut terhapus. Untuk menjaga riwayat, ubah status menjadi Nonaktif saja.`,'Ya, hapus'))return;
+  run(async()=>{await A.del('anggota',d.id);await refresh();toast('Anggota dihapus');});
+ },
+ pinjamForm(d){closeModal();pinjamForm({buku:d.buku});},
+ async kembali(d){
+  const l=S.d.peminjaman.find(x=>x.id===d.id),i=loanInfo(l);
+  if(!await confirmBox(`Proses pengembalian buku ini?${i.denda?`<br><br>Denda keterlambatan: <b>${rupiah(i.denda)}</b>`:''}`,'Ya, kembalikan'))return;
+  run(async()=>{const r=await doKembali(d.id);await refresh();toast(r.denda?`Dikembalikan. Denda ${rupiah(r.denda)}`:(r.antri?`Dikembalikan. Ada ${r.antri} reservasi menunggu buku ini`:'Buku dikembalikan'));});
+ },
+ perpanjang(d){run(async()=>{await doPerpanjang(d.id);await refresh();toast('Pinjaman diperpanjang');});},
+ resSiap(d){run(async()=>{await A.upd('reservasi',d.id,{status:'siap'});await refresh();toast('Reservasi ditandai siap diambil');});},
+ async resBatal(d){if(!await confirmBox('Batalkan reservasi ini?','Ya, batalkan'))return;run(async()=>{await A.upd('reservasi',d.id,{status:'dibatalkan'});await refresh();toast('Reservasi dibatalkan');});},
+ resPinjam(d){run(async()=>{const r=S.d.reservasi.find(x=>x.id===d.id);await doPinjam(r.anggota_id,r.buku_id,todayStr());await A.upd('reservasi',r.id,{status:'selesai'});await refresh();toast('Buku dipinjamkan dari reservasi');});},
+ exportCsv(){exportCsv();},
+ favToggle(d,el){
+  run(async()=>{const on=await MEM.toggleFav(d.id);S.d.favorit=await MEM.favorit();render();if(d.from==='modal')bookDetail(d.id);toast(on?'Ditambahkan ke favorit':'Dihapus dari favorit');});
+ },
+ reserve(d){run(async()=>{await MEM.reserve(d.id);await refresh();bookDetail(d.id);toast('Reservasi berhasil. Tunggu konfirmasi pustakawan.');});},
+ async mResCancel(d){if(!await confirmBox('Batalkan reservasi ini?','Ya, batalkan'))return;run(async()=>{await MEM.cancelRes(d.id);await refresh();toast('Reservasi dibatalkan');});},
+ mExtend(d){run(async()=>{await MEM.extend(d.id);await refresh();toast('Pinjaman diperpanjang');});}
+};
+document.addEventListener('click',e=>{
+ const root=$('#perpus-root');if(!root||!root.contains(e.target))return;
+ if(e.target.id==='ov'){closeModal();return;}
+ if(e.target.id==='ov2'){closeScanner();return;}
+ const el=e.target.closest('[data-act]');if(!el||!root.contains(el))return;
+ if(el.disabled)return;
+ const fn=ACT[el.dataset.act];if(!fn)return;
+ e.stopPropagation();
+ if(el.dataset.act==='favToggle'||el.closest('.heart'))e.preventDefault();
+ fn(el.dataset,el);
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){if(!$('#ov2').hidden)closeScanner();else if(!$('#ov').hidden)closeModal();}
+ if(e.key==='Enter'&&e.target.dataset&&e.target.dataset.scan){e.preventDefault();applyScan(e.target.dataset.scan,e.target.value,{target:e.target.dataset.target});}
+ if(e.key==='Enter'&&e.target.id==='q'&&S.d&&S.d.buku){const b=resolveBook(e.target.value);if(b&&String(b.kode_buku||'').toLowerCase()===e.target.value.trim().toLowerCase()){e.preventDefault();bookDetail(b.id);}}
+ if((e.key==='Enter'||e.key===' ')&&e.target.classList?.contains('bcard')){e.preventDefault();e.target.click();}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id!=='q')return;
+ S.q=e.target.value;
+ if(!SEARCHABLE[S.role].includes(S.page)){S.page=S.role==='admin'?'buku':'katalog';renderNav();renderFab();}
+ renderPage();
+});
+document.addEventListener('submit',async e=>{
+ const f=e.target;
+ if(f.id==='frmLogin'){e.preventDefault();return doLogin();}
+ if(f.id==='frmLaporan'){e.preventDefault();const fd=Object.fromEntries(new FormData(f));if(fd.from>fd.to)return toast('Tanggal awal harus sebelum tanggal akhir','err');S.f.from=fd.from;S.f.to=fd.to;renderPage();return;}
+ if(f.id==='frmPeng'){e.preventDefault();const fd=Object.fromEntries(new FormData(f));
+  return run(async()=>{
+   const logo=(fd.logo_url||'').trim(),tx=k=>(fd[k]||'').trim();
+   if(logo&&!safeImg(logo))throw new Error('Logo harus berupa URL http(s) atau gambar yang diunggah');
+   if(logo.length>400000)throw new Error('Logo terlalu besar, gunakan gambar yang lebih kecil');
+   const row={nama_aplikasi:tx('nama_aplikasi')||'Perpustakaan Digital',nama_sekolah:tx('nama_sekolah'),logo_url:logo,alamat:tx('alamat'),kepala_sekolah:tx('kepala_sekolah'),nip_kepala_sekolah:tx('nip_kepala_sekolah'),kepala_perpus:tx('kepala_perpus'),nip_kepala_perpus:tx('nip_kepala_perpus'),lama_pinjam_hari:Math.max(1,parseInt(fd.lama_pinjam_hari)||7),denda_per_hari:Math.max(0,parseInt(fd.denda_per_hari)||0),maks_pinjam:Math.max(1,parseInt(fd.maks_pinjam)||3),maks_perpanjang:Math.max(0,parseInt(fd.maks_perpanjang)||0)};
+   if(S.settings.id)await A.upd('pengaturan',S.settings.id,row);else await A.ins('pengaturan',row);
+   await refresh();applyBranding();toast('Pengaturan disimpan');
+  });}
+ if(f.id==='frmPw'){e.preventDefault();const fd=Object.fromEntries(new FormData(f));
+  if(fd.nw!==fd.nw2)return toast('Konfirmasi password baru tidak sama','err');
+  if(fd.nw.length<6)return toast('Password baru minimal 6 karakter','err');
+  return run(async()=>{await MEM.changePw(fd.old,fd.nw);f.reset();toast('Password berhasil diubah');});}
+});
+
+/* =====================================================================
+   LOGIN / LOGOUT / INIT
+   ===================================================================== */
+document.addEventListener('change',async e=>{
+ if(e.target.id==='pgDate'){S.f.tgl=e.target.value||todayStr();renderPage();return;}
+ if(e.target.id==='logoFile'&&e.target.files&&e.target.files[0]){
+  try{busy(true);const data=await readLogo(e.target.files[0]);$('#logoVal').value=data;$('#logoUrl').value='';setLogoPreview(data);}
+  catch(err){toast(err.message||'Gagal memuat logo','err');e.target.value='';}
+  finally{busy(false);}
+ }
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='logoUrl'){const v=e.target.value.trim();const h=$('#logoVal');if(h)h.value=v;setLogoPreview(v);}
+});
+function setupLoginLabels(){
+ const admin=S.loginRole==='admin';
+ $('#lg-l1').textContent=admin?'Email Admin':'Username / ID Anggota';
+ const u=$('#lg-u');u.type=admin?'email':'text';u.autocomplete='username';u.value='';$('#lg-p').value='';
+ $('#lg-err').hidden=true;
+ const h=$('#lg-hint');
+ if(IS_PREVIEW){h.hidden=false;h.innerHTML=admin?'<b>Mode preview.</b> Admin: <b>admin@perpus.id</b> / <b>admin123</b>':'<b>Mode preview.</b> Anggota: <b>anggota</b> / <b>anggota123</b> (atau <b>budi</b> / <b>password123</b>)';}
+ else{h.hidden=!admin;h.innerHTML=admin?'Admin masuk memakai akun Supabase Authentication.':'';}
+}
+const showLoginErr=m=>{const e=$('#lg-err');e.textContent=m;e.hidden=false;};
+async function doLogin(){
+ const id=$('#lg-u').value.trim(),pw=$('#lg-p').value,btn=$('#lg-btn');
+ $('#lg-err').hidden=true;btn.disabled=true;btn.textContent='Memproses...';busy(true);
+ try{
+  if(!IS_PREVIEW&&!sb)throw new Error('Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY.');
+  if(S.loginRole==='admin'){
+   if(IS_PREVIEW){if(id.toLowerCase()!=='admin@perpus.id'||pw!=='admin123')throw new Error('Email atau password admin salah');await startAdmin({email:id});}
+   else{const {data,error}=await sb.auth.signInWithPassword({email:id,password:pw});if(error)throw new Error('Email atau password admin salah');await startAdmin(data.user);}
+  }else{
+   const r=await MEM.login(id,pw);S.user=r.user;S.hash=r.hash;
+   try{sessionStorage.setItem('perpus_member',JSON.stringify(r));}catch(_){}
+   await startMember();
+  }
+ }catch(e){showLoginErr(e.message||'Gagal masuk');}
+ finally{busy(false);btn.disabled=false;btn.textContent='Masuk';}
+}
+async function startAdmin(u){
+ if(!IS_PREVIEW){
+  const {data:ok,error:er}=await sb.rpc('is_admin');
+  if(er||!ok){try{await sb.auth.signOut();}catch(_){}throw new Error(`Akun ${u.email} belum terdaftar sebagai admin. Jalankan di SQL Editor Supabase: insert into admin_users (email) values ('${String(u.email).toLowerCase()}');`);}
+ }
+ S.role='admin';S.user={nama:(u.email||'admin').split('@')[0],email:u.email};
+ await autoSetupDatabase();await loadAdminData();enterApp('dashboard');
+}
+async function startMember(){
+ S.role='anggota';await autoSetupDatabase();await loadMemberData();enterApp('beranda');
+}
+function enterApp(page){
+ S.page=page;S.q='';S.f={kat:'',sirk:'aktif',tab:'aktif',from:'',to:'',kt:'kategori',tgl:todayStr()};
+ $('#view-login').hidden=true;$('#view-app').hidden=false;
+ applyBranding();
+ render();
+}
+async function doLogout(){
+ if(S.role==='admin'&&!IS_PREVIEW&&sb){try{await sb.auth.signOut();}catch(_){}}
+ try{sessionStorage.removeItem('perpus_member');}catch(_){}
+ S.role=null;S.user=null;S.hash=null;S.d={};
+ $('#view-app').hidden=true;$('#view-login').hidden=false;setupLoginLabels();
+}
+
+/* ===== PWA (manifest dinamis + service worker via Blob) ===== */
+function setupPWA(){
+ try{
+  const icon='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#4F63E6"/><path d="M96 130h110a50 50 0 0 1 50 50v206a40 40 0 0 0-40-40H96z" fill="#fff"/><path d="M416 130H306a50 50 0 0 0-50 50v206a40 40 0 0 1 40-40h120z" fill="#DDE2FF"/></svg>');
+  const m={name:'Perpustakaan Digital',short_name:'Perpus',start_url:location.href.split('#')[0],scope:location.href.split('#')[0],display:'standalone',orientation:'portrait',background_color:'#ffffff',theme_color:'#4F63E6',icons:[{src:icon,sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};
+  let l=document.querySelector('link[rel="manifest"]');if(!l){l=document.createElement('link');l.rel='manifest';document.head.appendChild(l);}
+  l.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(m));
+  if(!document.querySelector('meta[name="theme-color"]')){const t=document.createElement('meta');t.name='theme-color';t.content='#4F63E6';document.head.appendChild(t);}
+  if(!document.querySelector('link[href*="family=Poppins"]')){const f=document.createElement('link');f.rel='stylesheet';f.href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap';document.head.appendChild(f);}
+ }catch(e){console.warn('PWA manifest:',e);}
+ try{
+  if('serviceWorker' in navigator&&location.protocol==='https:'){
+   const swCode=`const C='perpus-v1';
+self.addEventListener('install',e=>{self.skipWaiting();});
+self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});
+self.addEventListener('fetch',e=>{
+ const r=e.request;
+ if(r.method!=='GET'||r.url.includes('supabase.co'))return;
+ e.respondWith(fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put(r,cp)).catch(()=>{});return res;}).catch(()=>caches.match(r)));
+});`;
+   const url=URL.createObjectURL(new Blob([swCode],{type:'text/javascript'}));
+   navigator.serviceWorker.register(url).catch(err=>console.info('Service worker tidak didukung di lingkungan ini:',err&&err.message));
+  }
+ }catch(e){console.info('Service worker dilewati:',e&&e.message);}
+}
+
+async function init(){
+ document.documentElement.classList.add('perpus-lock');injectCss();
+ $('#ic-logout').innerHTML=ic('logout');$('#ic-search').innerHTML=ic('search');$('#ic-bell').innerHTML=ic('bell');
+ $('#lg-illu').innerHTML=ILLU.sky;
+ setupPWA();
+ busy(true);
+ try{
+  if(IS_PREVIEW){await autoSetupDatabase();}
+  else if(SUPABASE_URL.startsWith('http')&&!SUPABASE_ANON_KEY.includes('ANON_KEY_ANDA')){
+   const {createClient}=await import(CDN_SUPABASE);
+   sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  }
+  setupLoginLabels();
+  await loadPublicSettings();applyBranding();
+  // pulihkan sesi
+  if(!IS_PREVIEW&&sb){
+   const {data}=await sb.auth.getSession();
+   if(data&&data.session){S.loginRole='admin';await startAdmin(data.session.user);return;}
+  }
+  let saved=null;try{saved=JSON.parse(sessionStorage.getItem('perpus_member')||'null');}catch(_){}
+  if(saved&&saved.user&&saved.hash&&(IS_PREVIEW||sb)){
+   try{S.user=saved.user;S.hash=saved.hash;await startMember();return;}catch(_){S.user=null;S.hash=null;}
+  }
+  $('#view-login').hidden=false;
+  if(!IS_PREVIEW&&!sb)showLoginErr('Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di bagian atas skrip, lalu muat ulang.');
+ }catch(e){
+  console.error(e);$('#view-login').hidden=false;showLoginErr('Gagal memulai aplikasi: '+(e.message||e));
+ }finally{busy(false);}
+}
+init();
+</script>
+</body>
+</html>
